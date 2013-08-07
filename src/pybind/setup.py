@@ -17,7 +17,10 @@ setup(
     license          = "GPLv2",
     zip_safe         = False,
     keywords         = "ceph, bindings, api, cli",
-    long_description = "",  #XXX Long description should come from the README.rst
+    long_description = long_description(),
+    install_requires = [
+        'flask==0.8.1',
+    ],
     classifiers      = [
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
