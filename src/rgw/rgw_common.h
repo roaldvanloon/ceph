@@ -778,6 +778,8 @@ struct req_info {
   void init_meta_info(bool *found_nad_meta);
 };
 
+class RGWAuth;
+
 /** Store all the state necessary to complete and respond to an HTTP request*/
 struct req_state {
    CephContext *cct;
@@ -817,6 +819,7 @@ struct req_state {
 
    bool has_bad_meta;
 
+   RGWAuth *auth_handler;
    RGWUserInfo user; 
    RGWAccessControlPolicy *bucket_acl;
    RGWAccessControlPolicy *object_acl;

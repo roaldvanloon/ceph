@@ -20,7 +20,7 @@ struct rgw_swift_auth_info {
 
 class RGWSwift {
   CephContext *cct;
-  atomic_t down_flag;
+  RGWAuth *auth_handler;
 
   int validate_token(const char *token, struct rgw_swift_auth_info *info);
   int validate_keystone_token(RGWRados *store, const string& token, struct rgw_swift_auth_info *info,
@@ -30,32 +30,12 @@ class RGWSwift {
 		                    KeystoneToken& t);
   int update_user_info(RGWRados *store, struct rgw_swift_auth_info *info, RGWUserInfo& user_info);
 
-  class KeystoneRevokeThread : public Thread {
-    CephContext *cct;
-    RGWSwift *swift;
-    Mutex lock;
-    Cond cond;
-
-  public:
-    KeystoneRevokeThread(CephContext *_cct, RGWSwift *_swift) : cct(_cct), swift(_swift), lock("KeystoneRevokeThread") {}
-    void *entry();
-    void stop();
-  };
-
-  KeystoneRevokeThread *keystone_revoke_thread;
-
   void init();
   void finalize();
-  void init_keystone();
-  void finalize_keystone();
-  bool supports_keystone() {
-    return !cct->_conf->rgw_keystone_url.empty();
-  }
-protected:
-  int check_revoked();
+
 public:
 
-  RGWSwift(CephContext *_cct) : cct(_cct), keystone_revoke_thread(NULL) {
+  RGWSwift(CephContext *_cct) : cct(_cct), auth_handler(NULL) {
     init();
   }
   ~RGWSwift() {
@@ -63,7 +43,6 @@ public:
   }
 
   bool verify_swift_token(RGWRados *store, req_state *s);
-  bool going_down();
 };
 
 extern RGWSwift *rgw_swift;
