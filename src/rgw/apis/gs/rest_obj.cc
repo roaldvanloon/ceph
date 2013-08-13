@@ -555,6 +555,7 @@ RGWOp *RGWHandler_ObjStore_Obj_GS::op_head()
 RGWOp *RGWHandler_ObjStore_Obj_GS::op_post()
 {
   // TODO: allow form posts
+  // This includes resumable posts as defined by x-goog-resumable: start
   // https://developers.google.com/storage/docs/reference-methods#postobject
 
   return NULL;

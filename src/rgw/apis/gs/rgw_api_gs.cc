@@ -130,6 +130,10 @@ int RGWHandler_ObjStore_GS::init_from_header(struct req_state *s, int default_fo
     s->object_str = req_name;
     s->object = strdup(s->object_str.c_str());
   }
+
+  /* reparse x-meta-args without replacing the x-goog- prefix with x-amz- */
+  s->info.init_meta_info(NULL, false);
+
   return 0;
 }
 
