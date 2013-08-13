@@ -9,7 +9,7 @@
 
 namespace rgw { namespace api { namespace gs {
 
-extern int create_gs_policy(struct req_state *s, RGWRados *store, RGWAccessControlPolicy_GS& gspolicy);
+extern int create_policy(struct req_state *s, RGWRados *store, AccessControlPolicy& gspolicy);
 
 struct response_attr_param {
   const char *param;
@@ -26,7 +26,7 @@ static struct response_attr_param resp_attr_params[] = {
   {NULL, NULL},
 };
 
-void RGWGetObjACLs_ObjStore_GS::send_response()
+void GetObjACLs::send_response()
 {
   if (ret)
     set_req_state_err(s, ret);
@@ -36,9 +36,9 @@ void RGWGetObjACLs_ObjStore_GS::send_response()
   s->cio->write(acls.c_str(), acls.size());
 }
 
-int RGWPutObjACLs_ObjStore_GS::get_policy_from_state(RGWRados *store, struct req_state *s, stringstream& ss)
+int PutObjACLs::get_policy_from_state(RGWRados *store, struct req_state *s, stringstream& ss)
 {
-  RGWAccessControlPolicy_GS gspolicy(s->cct);
+  AccessControlPolicy gspolicy(s->cct);
 
   // bucket-* canned acls do not apply to bucket
   if (s->object_str.empty()) {
@@ -46,7 +46,7 @@ int RGWPutObjACLs_ObjStore_GS::get_policy_from_state(RGWRados *store, struct req
       s->canned_acl.clear();
   }
 
-  int r = create_gs_policy(s, store, gspolicy);
+  int r = create_policy(s, store, gspolicy);
   if (r < 0)
     return r;
 
@@ -55,7 +55,7 @@ int RGWPutObjACLs_ObjStore_GS::get_policy_from_state(RGWRados *store, struct req
   return 0;
 }
 
-void RGWGetObjCORS_ObjStore_GS::send_response()
+void GetObjCORS::send_response()
 {
   if (ret) {
     if (ret == -ENOENT)
@@ -68,7 +68,7 @@ void RGWGetObjCORS_ObjStore_GS::send_response()
   dump_start(s);
   if (!ret) {
     string cors;
-    RGWCORSConfiguration_GS *gscors = static_cast<RGWCORSConfiguration_GS *>(&bucket_cors);
+    CORSConfiguration *gscors = static_cast<CORSConfiguration *>(&bucket_cors);
     stringstream ss;
 
     gscors->to_xml(ss);
@@ -77,14 +77,14 @@ void RGWGetObjCORS_ObjStore_GS::send_response()
   }
 }
 
-int RGWPutObjCORS_ObjStore_GS::get_params()
+int PutObjCORS::get_params()
 {
   int r;
   char *data = NULL;
   int len = 0;
   size_t cl = 0;
-  RGWCORSXMLParser_GS parser(s->cct);
-  RGWCORSConfiguration_GS *cors_config;
+  CORSXMLParser parser(s->cct);
+  CORSConfiguration *cors_config;
 
   if (s->length)
     cl = atoll(s->length);
@@ -113,7 +113,7 @@ int RGWPutObjCORS_ObjStore_GS::get_params()
     r = -EINVAL;
     goto done_err;
   }
-  cors_config = static_cast<RGWCORSConfiguration_GS *>(parser.find_first("CORSConfiguration"));
+  cors_config = static_cast<CORSConfiguration *>(parser.find_first("CORSConfiguration"));
   if (!cors_config) {
     r = -EINVAL;
     goto done_err;
@@ -134,7 +134,7 @@ done_err:
   return r;
 }
 
-void RGWPutObjCORS_ObjStore_GS::send_response()
+void PutObjCORS::send_response()
 {
   if (ret)
     set_req_state_err(s, ret);
@@ -143,7 +143,7 @@ void RGWPutObjCORS_ObjStore_GS::send_response()
   dump_start(s);
 }
 
-void RGWPutObjACLs_ObjStore_GS::send_response()
+void PutObjACLs::send_response()
 {
   if (ret)
     set_req_state_err(s, ret);
@@ -154,13 +154,13 @@ void RGWPutObjACLs_ObjStore_GS::send_response()
 
 
 
-int RGWPutObj_ObjStore_GS::get_params()
+int PutObj::get_params()
 {
-  RGWAccessControlPolicy_GS gspolicy(s->cct);
+  AccessControlPolicy gspolicy(s->cct);
   if (!s->length)
     return -ERR_LENGTH_REQUIRED;
 
-  int r = create_gs_policy(s, store, gspolicy);
+  int r = create_policy(s, store, gspolicy);
   if (r < 0)
     return r;
 
@@ -169,7 +169,7 @@ int RGWPutObj_ObjStore_GS::get_params()
   return RGWPutObj_ObjStore::get_params();
 }
 
-void RGWPutObj_ObjStore_GS::send_response()
+void PutObj::send_response()
 {
   if (ret) {
     set_req_state_err(s, ret);
@@ -190,7 +190,7 @@ void RGWPutObj_ObjStore_GS::send_response()
   end_header(s);
 }
 
-int RGWGetObj_ObjStore_GS::send_response_data(bufferlist& bl, off_t bl_ofs, off_t bl_len)
+int GetObj::send_response_data(bufferlist& bl, off_t bl_ofs, off_t bl_len)
 {
   const char *content_type = NULL;
   string content_type_str;
@@ -304,7 +304,7 @@ send_data:
   return 0;
 }
 
-int RGWStatObj_ObjStore_GS::send_response_data(bufferlist& bl, off_t bl_ofs, off_t bl_len)
+int StatObj::send_response_data(bufferlist& bl, off_t bl_ofs, off_t bl_len)
 {
   const char *content_type = NULL;
   string content_type_str;
@@ -382,7 +382,7 @@ int RGWStatObj_ObjStore_GS::send_response_data(bufferlist& bl, off_t bl_ofs, off
   return 0;
 }
 
-void RGWDeleteObj_ObjStore_GS::send_response()
+void DeleteObj::send_response()
 {
   int r = ret;
   if (r == -ENOENT)
@@ -395,12 +395,12 @@ void RGWDeleteObj_ObjStore_GS::send_response()
   end_header(s);
 }
 
-int RGWCopyObj_ObjStore_GS::init_dest_policy()
+int CopyObj::init_dest_policy()
 {
-  RGWAccessControlPolicy_GS gspolicy(s->cct);
+  AccessControlPolicy gspolicy(s->cct);
 
   /* build a policy for the target object */
-  int r = create_gs_policy(s, store, gspolicy);
+  int r = create_policy(s, store, gspolicy);
   if (r < 0)
     return r;
 
@@ -409,7 +409,7 @@ int RGWCopyObj_ObjStore_GS::init_dest_policy()
   return 0;
 }
 
-int RGWCopyObj_ObjStore_GS::get_params()
+int CopyObj::get_params()
 {
   if_mod = s->info.env->get("HTTP_X_GOOG_COPY_SOURCE_IF_MODIFIED_SINCE");
   if_unmod = s->info.env->get("HTTP_X_GOOG_COPY_SOURCE_IF_UNMODIFIED_SINCE");
@@ -469,7 +469,7 @@ int RGWCopyObj_ObjStore_GS::get_params()
   return 0;
 }
 
-void RGWCopyObj_ObjStore_GS::send_partial_response(off_t ofs)
+void CopyObj::send_partial_response(off_t ofs)
 {
   if (!sent_header) {
     if (ret)
@@ -490,7 +490,7 @@ void RGWCopyObj_ObjStore_GS::send_partial_response(off_t ofs)
   rgw_flush_formatter(s, s->formatter);
 }
 
-void RGWCopyObj_ObjStore_GS::send_response()
+void CopyObj::send_response()
 {
   if (!sent_header)
     send_partial_response(0);
@@ -510,49 +510,49 @@ void RGWCopyObj_ObjStore_GS::send_response()
   }
 }
 
-RGWOp *RGWHandler_ObjStore_Obj_GS::op_get()
+RGWOp *ObjHandler::op_get()
 {
   if (is_acl_op())
-    return new RGWGetObjACLs_ObjStore_GS;
+    return new GetObj;
 
-  RGWGetObj_ObjStore_GS *get_obj_op = new RGWGetObj_ObjStore_GS;
+  GetObj *get_obj_op = new GetObj;
   get_obj_op->set_get_data(true);
   //if (s->info.args.exists("generation"))
   //  get_obj_op->set_request_version(s->info.args.get("generation"))
   return get_obj_op;
 }
 
-RGWOp *RGWHandler_ObjStore_Obj_GS::op_put()
+RGWOp *ObjHandler::op_put()
 {
   //if (s->info.args.exists("generation"))
   //  set effective version id
 
   if (is_acl_op())
-    return new RGWPutObjACLs_ObjStore_GS;
+    return new PutObjACLs;
   if (!s->copy_source)
-    return new RGWPutObj_ObjStore_GS;
+    return new PutObj;
   else
-    return new RGWCopyObj_ObjStore_GS;
+    return new CopyObj;
 }
 
-RGWOp *RGWHandler_ObjStore_Obj_GS::op_delete()
+RGWOp *ObjHandler::op_delete()
 {
   //if (s->info.args.exists("generation"))
   //  set effective version id
 
-  return new RGWDeleteObj_ObjStore_GS;
+  return new DeleteObj;
 }
 
 
-RGWOp *RGWHandler_ObjStore_Obj_GS::op_head()
+RGWOp *ObjHandler::op_head()
 {
   //if (s->info.args.exists("generation"))
   //  set effective version id
 
-  return new RGWStatObj_ObjStore_GS;
+  return new StatObj;
 }
 
-RGWOp *RGWHandler_ObjStore_Obj_GS::op_post()
+RGWOp *ObjHandler::op_post()
 {
   // TODO: allow form posts
   // This includes resumable posts as defined by x-goog-resumable: start

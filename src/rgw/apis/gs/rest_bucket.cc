@@ -9,9 +9,9 @@
 
 namespace rgw { namespace api { namespace gs {
 
-extern int create_gs_policy(struct req_state *s, RGWRados *store, RGWAccessControlPolicy_GS& gspolicy);
+extern int create_policy(struct req_state *s, RGWRados *store, AccessControlPolicy& gspolicy);
 
-int RGWListBucket_ObjStore_GS::get_params()
+int ListBucket::get_params()
 {
   prefix = s->info.args.get("prefix");
   marker = s->info.args.get("marker");
@@ -24,7 +24,7 @@ int RGWListBucket_ObjStore_GS::get_params()
   return 0;
 }
 
-void RGWListBucket_ObjStore_GS::send_response()
+void ListBucket::send_response()
 {
   if (ret < 0)
     set_req_state_err(s, ret);
@@ -73,11 +73,11 @@ void RGWListBucket_ObjStore_GS::send_response()
   rgw_flush_formatter_and_reset(s, s->formatter);
 }
 
-int RGWCreateBucket_ObjStore_GS::get_params()
+int CreateBucket::get_params()
 {
-  RGWAccessControlPolicy_GS gspolicy(s->cct);
+  AccessControlPolicy gspolicy(s->cct);
 
-  int r = create_gs_policy(s, store, gspolicy);
+  int r = create_policy(s, store, gspolicy);
   if (r < 0)
     return r;
 
@@ -128,7 +128,7 @@ int RGWCreateBucket_ObjStore_GS::get_params()
   return 0;
 }
 
-void RGWCreateBucket_ObjStore_GS::send_response()
+void CreateBucket::send_response()
 {
   if (ret == -ERR_BUCKET_EXISTS)
     ret = 0;
@@ -152,7 +152,7 @@ void RGWCreateBucket_ObjStore_GS::send_response()
   }
 }
 
-void RGWDeleteBucket_ObjStore_GS::send_response()
+void DeleteBucket::send_response()
 {
   int r = ret;
   if (!r)
@@ -172,7 +172,7 @@ void RGWDeleteBucket_ObjStore_GS::send_response()
   }
 }
 
-void RGWGetBucketLogging_ObjStore_GS::send_response()
+void GetBucketLogging::send_response()
 {
   dump_errno(s);
   end_header(s, "application/xml");
@@ -193,7 +193,7 @@ static void dump_bucket_metadata(struct req_state *s, RGWBucketEnt& bucket)
   s->cio->print("X-RGW-Bytes-Used: %s\n", buf);
 }
 
-void RGWStatBucket_ObjStore_GS::send_response()
+void StatBucket::send_response()
 {
   if (ret >= 0) {
     dump_bucket_metadata(s, bucket);
@@ -206,7 +206,7 @@ void RGWStatBucket_ObjStore_GS::send_response()
   dump_start(s);
 }
 
-void RGWGetBucketACLs_ObjStore_GS::send_response()
+void GetBucketACLs::send_response()
 {
   if (ret)
     set_req_state_err(s, ret);
@@ -216,9 +216,9 @@ void RGWGetBucketACLs_ObjStore_GS::send_response()
   s->cio->write(acls.c_str(), acls.size());
 }
 
-int RGWPutBucketACLs_ObjStore_GS::get_policy_from_state(RGWRados *store, struct req_state *s, stringstream& ss)
+int PutBucketACLs::get_policy_from_state(RGWRados *store, struct req_state *s, stringstream& ss)
 {
-  RGWAccessControlPolicy_GS gspolicy(s->cct);
+  AccessControlPolicy gspolicy(s->cct);
 
   // bucket-* canned acls do not apply to bucket
   if (s->object_str.empty()) {
@@ -226,7 +226,7 @@ int RGWPutBucketACLs_ObjStore_GS::get_policy_from_state(RGWRados *store, struct 
       s->canned_acl.clear();
   }
 
-  int r = create_gs_policy(s, store, gspolicy);
+  int r = create_policy(s, store, gspolicy);
   if (r < 0)
     return r;
 
@@ -235,7 +235,7 @@ int RGWPutBucketACLs_ObjStore_GS::get_policy_from_state(RGWRados *store, struct 
   return 0;
 }
 
-void RGWPutBucketACLs_ObjStore_GS::send_response()
+void PutBucketACLs::send_response()
 {
   if (ret)
     set_req_state_err(s, ret);
@@ -244,7 +244,7 @@ void RGWPutBucketACLs_ObjStore_GS::send_response()
   dump_start(s);
 }
 
-void RGWGetBucketCORS_ObjStore_GS::send_response()
+void GetBucketCORS::send_response()
 {
   if (ret) {
     if (ret == -ENOENT)
@@ -257,7 +257,7 @@ void RGWGetBucketCORS_ObjStore_GS::send_response()
   dump_start(s);
   if (!ret) {
     string cors;
-    RGWCORSConfiguration_GS *gscors = static_cast<RGWCORSConfiguration_GS *>(&bucket_cors);
+    CORSConfiguration *gscors = static_cast<CORSConfiguration *>(&bucket_cors);
     stringstream ss;
 
     gscors->to_xml(ss);
@@ -266,14 +266,14 @@ void RGWGetBucketCORS_ObjStore_GS::send_response()
   }
 }
 
-int RGWPutBucketCORS_ObjStore_GS::get_params()
+int PutBucketCORS::get_params()
 {
   int r;
   char *data = NULL;
   int len = 0;
   size_t cl = 0;
-  RGWCORSXMLParser_GS parser(s->cct);
-  RGWCORSConfiguration_GS *cors_config;
+  CORSXMLParser parser(s->cct);
+  CORSConfiguration *cors_config;
 
   if (s->length)
     cl = atoll(s->length);
@@ -302,7 +302,7 @@ int RGWPutBucketCORS_ObjStore_GS::get_params()
     r = -EINVAL;
     goto done_err;
   }
-  cors_config = static_cast<RGWCORSConfiguration_GS *>(parser.find_first("CORSConfiguration"));
+  cors_config = static_cast<CORSConfiguration *>(parser.find_first("CORSConfiguration"));
   if (!cors_config) {
     r = -EINVAL;
     goto done_err;
@@ -323,7 +323,7 @@ done_err:
   return r;
 }
 
-void RGWPutBucketCORS_ObjStore_GS::send_response()
+void PutBucketCORS::send_response()
 {
   if (ret)
     set_req_state_err(s, ret);
@@ -332,41 +332,41 @@ void RGWPutBucketCORS_ObjStore_GS::send_response()
   dump_start(s);
 }
 
-RGWOp *RGWHandler_ObjStore_Bucket_GS::op_get()
+RGWOp *BucketHandler::op_get()
 {
   //if (is_versioning_op())
-  //  return new RGWGetVersioning_ObjStore_GS;
+  //  return new GetBucketVersioning;
   //if (is_lifecycle_op())
-  //  return new RGWGetLifecycle_ObjStore_GS;
+  //  return new GetBucketLifecycle;
   if (is_logging_op())
-    return new RGWGetBucketLogging_ObjStore_GS;
+    return new GetBucketLogging;
   if (is_acl_op())
-    return new RGWGetBucketACLs_ObjStore_GS;
+    return new GetBucketACLs;
   if (is_cors_op())
-    return new RGWGetBucketCORS_ObjStore_GS;
-  return new RGWListBucket_ObjStore_GS;
+    return new GetBucketCORS;
+  return new ListBucket;
 }
 
-RGWOp *RGWHandler_ObjStore_Bucket_GS::op_put()
+RGWOp *BucketHandler::op_put()
 {
   //if (is_websiteconfig_op())
-  //  return new RGWPutWebsiteConfig_ObjStore_GS;
+  //  return new PutBucketWebsiteConfig;
   //if (is_versioning_op())
-  //  return new RGWPutVersioning_ObjStore_GS;
+  //  return new PutBucketVersioning;
   //if (is_lifecycle_op())
-  //  return new RGWPutLifecycle_ObjStore_GS;
+  //  return new PutBucketLifecycle;
   //if (is_logging_op())
-  //  return new RGWPutBucketLogging_ObjStore_GS;
+  //  return new PutBucketLogging;
   if (is_acl_op())
-    return new RGWPutBucketACLs_ObjStore_GS;
+    return new PutBucketACLs;
   if (is_cors_op())
-    return new RGWPutBucketCORS_ObjStore_GS;
-  return new RGWCreateBucket_ObjStore_GS;
+    return new PutBucketCORS;
+  return new CreateBucket;
 }
 
-RGWOp *RGWHandler_ObjStore_Bucket_GS::op_delete()
+RGWOp *BucketHandler::op_delete()
 {
-  return new RGWDeleteBucket_ObjStore_GS;
+  return new DeleteBucket;
 }
 
 }}}

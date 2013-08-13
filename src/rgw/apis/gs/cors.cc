@@ -14,7 +14,7 @@
 
 namespace rgw { namespace api { namespace gs {
 
-void RGWCORSRule_GS::to_xml(XMLFormatter& f) {
+void CORSRule::to_xml(XMLFormatter& f) {
 
   f.open_object_section("CORSRule");
   /*ID if present*/
@@ -56,7 +56,7 @@ void RGWCORSRule_GS::to_xml(XMLFormatter& f) {
   f.close_section();
 }
 
-bool RGWCORSRule_GS::xml_end(const char *el) {
+bool CORSRule::xml_end(const char *el) {
   XMLObjIter iter = find("AllowedMethod");
   XMLObj *obj;
   /*Check all the allowedmethods*/
@@ -140,83 +140,47 @@ bool RGWCORSRule_GS::xml_end(const char *el) {
   return true;
 }
 
-void RGWCORSConfiguration_GS::to_xml(ostream& out) {
+void CORSConfiguration::to_xml(ostream& out) {
   XMLFormatter f;
   f.open_object_section("CORSConfiguration");
   for(list<RGWCORSRule>::iterator it = rules.begin();
       it != rules.end(); ++it) {
-    (static_cast<RGWCORSRule_GS &>(*it)).to_xml(f);
+    (static_cast<CORSRule &>(*it)).to_xml(f);
   }
   f.close_section();
   f.flush(out);
 }
 
-bool RGWCORSConfiguration_GS::xml_end(const char *el) {
+bool CORSConfiguration::xml_end(const char *el) {
   XMLObjIter iter = find("CORSRule");
-  RGWCORSRule_GS *obj;
-  if (!(obj = static_cast<RGWCORSRule_GS *>(iter.get_next()))) {
+  CORSRule *obj;
+  if (!(obj = static_cast<CORSRule *>(iter.get_next()))) {
     dout(0) << "CORSConfiguration should have atleast one CORSRule" << dendl;
     return false;
   }
-  for(; obj; obj = static_cast<RGWCORSRule_GS *>(iter.get_next())) {
+  for(; obj; obj = static_cast<CORSRule *>(iter.get_next())) {
     rules.push_back(*obj);
   }
   return true;
 }
 
-class CORSRuleID_GS : public XMLObj {
-  public:
-    CORSRuleID_GS() {}
-    ~CORSRuleID_GS() {}
-};
-
-class CORSRuleAllowedOrigin_GS : public XMLObj {
-  public:
-    CORSRuleAllowedOrigin_GS() {}
-    ~CORSRuleAllowedOrigin_GS() {}
-};
-
-class CORSRuleAllowedMethod_GS : public XMLObj {
-  public:
-    CORSRuleAllowedMethod_GS() {}
-    ~CORSRuleAllowedMethod_GS() {}
-};
-
-class CORSRuleAllowedHeader_GS : public XMLObj {
-  public:
-    CORSRuleAllowedHeader_GS() {}
-    ~CORSRuleAllowedHeader_GS() {}
-};
-
-class CORSRuleMaxAgeSeconds_GS : public XMLObj {
-  public:
-    CORSRuleMaxAgeSeconds_GS() {}
-    ~CORSRuleMaxAgeSeconds_GS() {}
-};
-
-class CORSRuleExposeHeader_GS : public XMLObj {
-  public:
-    CORSRuleExposeHeader_GS() {}
-    ~CORSRuleExposeHeader_GS() {}
-};
-
-XMLObj *RGWCORSXMLParser_GS::alloc_obj(const char *el) {
+XMLObj *CORSXMLParser::alloc_obj(const char *el) {
   if (strcmp(el, "CORSConfiguration") == 0) {
-    return new RGWCORSConfiguration_GS;
+    return new CORSConfiguration;
   } else if (strcmp(el, "CORSRule") == 0) {
-    return new RGWCORSRule_GS;
+    return new CORSRule;
   } else if (strcmp(el, "ID") == 0) {
-    return new CORSRuleID_GS;
+    return new CORSRuleID;
   } else if (strcmp(el, "AllowedOrigin") == 0) {
-    return new CORSRuleAllowedOrigin_GS;
+    return new CORSRuleAllowedOrigin;
   } else if (strcmp(el, "AllowedMethod") == 0) {
-    return new CORSRuleAllowedMethod_GS;
+    return new CORSRuleAllowedMethod;
   } else if (strcmp(el, "AllowedHeader") == 0) {
-    return new CORSRuleAllowedHeader_GS;
+    return new CORSRuleAllowedHeader;
   } else if (strcmp(el, "MaxAgeSeconds") == 0) {
-    return new CORSRuleMaxAgeSeconds_GS;
+    return new CORSRuleMaxAgeSeconds;
   } else if (strcmp(el, "ExposeHeader")  == 0) {
-    return new CORSRuleExposeHeader_GS;
+    return new CORSRuleExposeHeader;
   }
   return NULL;
 }

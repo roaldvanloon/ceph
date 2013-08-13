@@ -29,7 +29,7 @@ static bool looks_like_ip_address(const char *bucket)
   return (num_periods == 3);
 }
 
-int create_gs_policy(struct req_state *s, RGWRados *store, RGWAccessControlPolicy_GS& gspolicy)
+int create_policy(struct req_state *s, RGWRados *store, AccessControlPolicy& gspolicy)
 {
   if (s->has_acl_header) {
     if (!s->canned_acl.empty())
@@ -57,7 +57,7 @@ static void next_tok(string& str, string& tok, char delim)
   }
 }
 
-int RGWHandler_ObjStore_GS::init_from_header(struct req_state *s, int default_formatter, bool configurable_format)
+int Handler::init_from_header(struct req_state *s, int default_formatter, bool configurable_format)
 {
   string req;
   string first;
@@ -98,7 +98,7 @@ int RGWHandler_ObjStore_GS::init_from_header(struct req_state *s, int default_fo
         next_tok(req, first, '/');
       }
     }
-    s->info.effective_uri = req;
+    s->info.effective_uri = req[0] != '/' ? string("/").append(req) : req;
   } else {
     if (req.compare(g_conf->rgw_gs_url_prefix) == 0) {
       s->formatter = new RGWFormatter_Plain;
@@ -134,10 +134,23 @@ int RGWHandler_ObjStore_GS::init_from_header(struct req_state *s, int default_fo
   /* reparse x-meta-args without replacing the x-goog- prefix with x-amz- */
   s->info.init_meta_info(NULL, false);
 
+  /* now check out api-version (and remove it, we dont want it as canonical header) */
+  map<string, string>::iterator iter;
+  string api_version;
+  iter = s->info.x_meta_map.find("x-goog-api-version");
+  if (iter == s->info.x_meta_map.end())
+    return -ERR_MALFORMED_HEADER;
+  api_version = iter->second;
+  if (api_version != "1" && api_version != "2") // currently only allow v1.0 and v2.0
+    return -EINVAL;
+  s->info.x_meta_map.erase(iter);
+
+  dout(0) << "Using API version " << api_version << dendl;
+
   return 0;
 }
 
-int RGWHandler_ObjStore_GS::validate_bucket_name(const string& bucket, bool relaxed_names)
+int Handler::validate_bucket_name(const string& bucket, bool relaxed_names)
 {
   int ret = RGWHandler_ObjStore::validate_bucket_name(bucket);
   if (ret < 0)
@@ -172,7 +185,7 @@ int RGWHandler_ObjStore_GS::validate_bucket_name(const string& bucket, bool rela
   return 0;
 }
 
-int RGWHandler_ObjStore_GS::init(RGWRados *store, struct req_state *s, RGWClientIO *cio)
+int Handler::init(RGWRados *store, struct req_state *s, RGWClientIO *cio)
 {
   dout(10) << "s->object=" << (s->object ? s->object : "<NULL>") << " s->bucket=" << (s->bucket_name ? s->bucket_name : "<NULL>") << dendl;
 

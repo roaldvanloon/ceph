@@ -8,7 +8,7 @@
 
 namespace rgw { namespace api { namespace gs {
 
-class RGW_Auth_GS {
+class Auth {
 public:
   static int authorize(RGWRados *store, struct req_state *s);
   static int authorize_aws_signature(RGWRados *store, struct req_state *s);
@@ -16,11 +16,11 @@ public:
   static int authorize_oauth_signature(RGWRados *store, struct req_state *s);
 };
 
-class RGWHandler_ObjStore_GS : public RGWHandler_ObjStore {
-  friend class RGWRESTMgr_GS;
+class Handler : public RGWHandler_ObjStore {
+  friend class RESTMgr;
 public:
-  RGWHandler_ObjStore_GS() : RGWHandler_ObjStore() {}
-  virtual ~RGWHandler_ObjStore_GS() {}
+  Handler() : RGWHandler_ObjStore() {}
+  virtual ~Handler() {}
   virtual int validate_bucket_name(const string& bucket) {
     return 0;
   }
@@ -29,15 +29,15 @@ public:
   int validate_bucket_name(const string& bucket, bool relaxed_names);
   virtual int init(RGWRados *store, struct req_state *state, RGWClientIO *cio);
   virtual int authorize() {
-    return RGW_Auth_GS::authorize(store, s);
+    return Auth::authorize(store, s);
   }
 };
 
-class RGWHandler_Auth_GS : public RGWHandler_ObjStore {
-  friend class RGWRESTMgr_GS;
+class AuthHandler : public RGWHandler_ObjStore {
+  friend class RESTMgr;
 public:
-  RGWHandler_Auth_GS() : RGWHandler_ObjStore() {}
-  virtual ~RGWHandler_Auth_GS() {}
+  AuthHandler() : RGWHandler_ObjStore() {}
+  virtual ~AuthHandler() {}
 
   virtual int validate_bucket_name(const string& bucket) {
     return 0;
@@ -47,14 +47,14 @@ public:
 
   virtual int init(RGWRados *store, struct req_state *state, RGWClientIO *cio);
   virtual int authorize() {
-    return RGW_Auth_GS::authorize(store, s);
+    return Auth::authorize(store, s);
   }
 };
 
-class RGWRESTMgr_GS : public RGWRESTMgr {
+class RESTMgr : public RGWRESTMgr {
 public:
-  RGWRESTMgr_GS() {}
-  virtual ~RGWRESTMgr_GS() {}
+  RESTMgr() {}
+  virtual ~RESTMgr() {}
 
   virtual RGWRESTMgr *get_resource_mgr(struct req_state *s, const string& uri, string *out_uri) {
     return this;
@@ -121,4 +121,4 @@ public:
 
 }}}
 
-#endif
+#endif /* CEPH_RGW_API_GS_H */

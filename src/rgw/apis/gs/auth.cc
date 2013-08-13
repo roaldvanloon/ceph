@@ -11,7 +11,7 @@
 
 namespace rgw { namespace api { namespace gs {
 
-int RGW_Auth_GS::authorize_aws_signature(RGWRados *store, struct req_state *s)
+int Auth::authorize_aws_signature(RGWRados *store, struct req_state *s)
 {
   bool qsr = false;
   string auth_id;
@@ -103,19 +103,19 @@ int RGW_Auth_GS::authorize_aws_signature(RGWRados *store, struct req_state *s)
   return 0;
 }
 
-int RGW_Auth_GS::authorize_goog1_signature(RGWRados *store, struct req_state *s)
+int Auth::authorize_goog1_signature(RGWRados *store, struct req_state *s)
 {
   dout(5) << "GOOG1 signatures not implemented, yet." << dendl;
   return -EPERM;
 }
 
-int RGW_Auth_GS::authorize_oauth_signature(RGWRados *store, struct req_state *s)
+int Auth::authorize_oauth_signature(RGWRados *store, struct req_state *s)
 {
   dout(5) << "OAUTH signatures not implemented, yet." << dendl;
   return -EPERM;
 }
 
-int RGW_Auth_GS::authorize(RGWRados *store, struct req_state *s)
+int Auth::authorize(RGWRados *store, struct req_state *s)
 {
 
   if (!s->http_auth || !(*s->http_auth)) {
@@ -137,9 +137,9 @@ int RGW_Auth_GS::authorize(RGWRados *store, struct req_state *s)
   return -EPERM;
 }
 
-int RGWHandler_Auth_GS::init(RGWRados *store, struct req_state *state, RGWClientIO *cio)
+int AuthHandler::init(RGWRados *store, struct req_state *state, RGWClientIO *cio)
 {
-  int ret = RGWHandler_ObjStore_GS::init_from_header(state, RGW_FORMAT_JSON, true);
+  int ret = Handler::init_from_header(state, RGW_FORMAT_JSON, true);
   if (ret < 0)
     return ret;
 

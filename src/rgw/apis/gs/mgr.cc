@@ -10,19 +10,19 @@
 namespace rgw { namespace api { namespace gs {
 
 
-RGWHandler *RGWRESTMgr_GS::get_handler(struct req_state *s)
+RGWHandler *RESTMgr::get_handler(struct req_state *s)
 {
-  int ret = RGWHandler_ObjStore_GS::init_from_header(s, RGW_FORMAT_XML, false);
+  int ret = Handler::init_from_header(s, RGW_FORMAT_XML, false);
   if (ret < 0)
     return NULL;
 
   if (!s->bucket_name)
-    return new RGWHandler_ObjStore_Service_GS;
+    return new ServiceHandler;
 
   if (!s->object)
-    return new RGWHandler_ObjStore_Bucket_GS;
+    return new BucketHandler;
 
-  return new RGWHandler_ObjStore_Obj_GS;
+  return new ObjHandler;
 }
 
 }}}

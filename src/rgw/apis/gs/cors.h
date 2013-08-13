@@ -15,33 +15,69 @@
 
 namespace rgw { namespace api { namespace gs {
 
-class RGWCORSRule_GS : public RGWCORSRule, public XMLObj
+class CORSRule : public RGWCORSRule, public XMLObj
 {
   public:
-    RGWCORSRule_GS() {}
-    ~RGWCORSRule_GS() {}
+    CORSRule() {}
+    ~CORSRule() {}
     
     bool xml_end(const char *el);
     void to_xml(XMLFormatter& f);
 };
 
-class RGWCORSConfiguration_GS : public RGWCORSConfiguration, public XMLObj
+class CORSConfiguration : public RGWCORSConfiguration, public XMLObj
 {
   public:
-    RGWCORSConfiguration_GS() {}
-    ~RGWCORSConfiguration_GS() {}
+    CORSConfiguration() {}
+    ~CORSConfiguration() {}
 
     bool xml_end(const char *el);
     void to_xml(ostream& out);
 };
 
-class RGWCORSXMLParser_GS : public RGWXMLParser
+class CORSXMLParser : public RGWXMLParser
 {
   CephContext *cct;
 
   XMLObj *alloc_obj(const char *el);
 public:
-  RGWCORSXMLParser_GS(CephContext *_cct) : cct(_cct) {}
+  CORSXMLParser(CephContext *_cct) : cct(_cct) {}
+};
+
+class CORSRuleID : public XMLObj {
+  public:
+    CORSRuleID() {}
+    ~CORSRuleID() {}
+};
+
+class CORSRuleAllowedOrigin : public XMLObj {
+  public:
+    CORSRuleAllowedOrigin() {}
+    ~CORSRuleAllowedOrigin() {}
+};
+
+class CORSRuleAllowedMethod : public XMLObj {
+  public:
+    CORSRuleAllowedMethod() {}
+    ~CORSRuleAllowedMethod() {}
+};
+
+class CORSRuleAllowedHeader : public XMLObj {
+  public:
+    CORSRuleAllowedHeader() {}
+    ~CORSRuleAllowedHeader() {}
+};
+
+class CORSRuleMaxAgeSeconds : public XMLObj {
+  public:
+    CORSRuleMaxAgeSeconds() {}
+    ~CORSRuleMaxAgeSeconds() {}
+};
+
+class CORSRuleExposeHeader : public XMLObj {
+  public:
+    CORSRuleExposeHeader() {}
+    ~CORSRuleExposeHeader() {}
 };
 
 }}}

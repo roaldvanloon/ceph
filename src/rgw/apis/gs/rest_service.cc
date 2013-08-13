@@ -25,12 +25,12 @@ static void __dump_bucket(struct req_state *s, RGWBucketEnt& obj)
   s->formatter->close_section();
 }
 
-RGWOp *RGWHandler_ObjStore_Service_GS::op_get()
+RGWOp *ServiceHandler::op_get()
 {
-  return new RGWListBuckets_ObjStore_GS;
+  return new ListBuckets;
 }
 
-void RGWListBuckets_ObjStore_GS::send_response_begin(bool has_buckets)
+void ListBuckets::send_response_begin(bool has_buckets)
 {
   if (ret)
     set_req_state_err(s, ret);
@@ -46,7 +46,7 @@ void RGWListBuckets_ObjStore_GS::send_response_begin(bool has_buckets)
   }
 }
 
-void RGWListBuckets_ObjStore_GS::send_response_data(RGWUserBuckets& buckets)
+void ListBuckets::send_response_data(RGWUserBuckets& buckets)
 {
   if (!sent_data)
     return;
@@ -61,7 +61,7 @@ void RGWListBuckets_ObjStore_GS::send_response_data(RGWUserBuckets& buckets)
   rgw_flush_formatter(s, s->formatter);
 }
 
-void RGWListBuckets_ObjStore_GS::send_response_end()
+void ListBuckets::send_response_end()
 {
   if (sent_data) {
     s->formatter->close_section();

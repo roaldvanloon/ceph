@@ -14,7 +14,7 @@ namespace rgw { namespace api { namespace gs {
 static string rgw_uri_all_users = RGW_URI_ALL_USERS;
 static string rgw_uri_auth_users = RGW_URI_AUTH_USERS;
 
-void ACLPermission_GS::to_xml(ostream& out)
+void ACLPermission::to_xml(ostream& out)
 {
   if ((flags & RGW_PERM_FULL_CONTROL) == RGW_PERM_FULL_CONTROL) {
    out << "<Permission>FULL_CONTROL</Permission>";
@@ -30,7 +30,7 @@ void ACLPermission_GS::to_xml(ostream& out)
   }
 }
 
-bool ACLPermission_GS::xml_end(const char *el)
+bool ACLPermission::xml_end(const char *el)
 {
   const char *s = data.c_str();
   if (strcasecmp(s, "READ") == 0) {
@@ -53,9 +53,9 @@ bool ACLPermission_GS::xml_end(const char *el)
 }
 
 
-class ACLGranteeType_GS {
+class ACLGranteeType {
 public:
-  static const char *to_string(ACLGranteeType& type) {
+  static const char *to_string(::ACLGranteeType& type) {
     switch (type.get_type()) {
     case ACL_TYPE_CANON_USER:
       return "CanonicalUser";
@@ -68,7 +68,7 @@ public:
     }
   }
 
-  static void set(const char *s, ACLGranteeType& type) {
+  static void set(const char *s, ::ACLGranteeType& type) {
     if (!s) {
       type.set(ACL_TYPE_UNKNOWN);
       return;
@@ -84,38 +84,38 @@ public:
   }
 };
 
-class ACLID_GS : public XMLObj
+class ACLID : public XMLObj
 {
 public:
-  ACLID_GS() {}
-  ~ACLID_GS() {}
+  ACLID() {}
+  ~ACLID() {}
   string& to_str() { return data; }
 };
 
-class ACLURI_GS : public XMLObj
+class ACLURI : public XMLObj
 {
 public:
-  ACLURI_GS() {}
-  ~ACLURI_GS() {}
+  ACLURI() {}
+  ~ACLURI() {}
 };
 
-class ACLEmail_GS : public XMLObj
+class ACLEmail : public XMLObj
 {
 public:
-  ACLEmail_GS() {}
-  ~ACLEmail_GS() {}
+  ACLEmail() {}
+  ~ACLEmail() {}
 };
 
-class ACLDisplayName_GS : public XMLObj
+class ACLDisplayName : public XMLObj
 {
 public:
- ACLDisplayName_GS() {}
- ~ACLDisplayName_GS() {}
+ ACLDisplayName() {}
+ ~ACLDisplayName() {}
 };
 
-bool ACLOwner_GS::xml_end(const char *el) {
-  ACLID_GS *acl_id = static_cast<ACLID_GS *>(find_first("ID"));
-  ACLID_GS *acl_name = static_cast<ACLID_GS *>(find_first("DisplayName"));
+bool ACLOwner::xml_end(const char *el) {
+  ACLID *acl_id = static_cast<ACLID *>(find_first("ID"));
+  ACLID *acl_name = static_cast<ACLID *>(find_first("DisplayName"));
 
   // ID is mandatory
   if (!acl_id)
@@ -131,24 +131,24 @@ bool ACLOwner_GS::xml_end(const char *el) {
   return true;
 }
 
-bool ACLGrant_GS::xml_end(const char *el) {
-  ACLGrantee_GS *acl_grantee;
-  ACLID_GS *acl_id;
-  ACLURI_GS *acl_uri;
-  ACLEmail_GS *acl_email;
-  ACLPermission_GS *acl_permission;
-  ACLDisplayName_GS *acl_name;
+bool ACLGrant::xml_end(const char *el) {
+  ACLGrantee *acl_grantee;
+  ACLID *acl_id;
+  ACLURI *acl_uri;
+  ACLEmail *acl_email;
+  ACLPermission *acl_permission;
+  ACLDisplayName *acl_name;
   string uri;
 
-  acl_grantee = static_cast<ACLGrantee_GS *>(find_first("Grantee"));
+  acl_grantee = static_cast<ACLGrantee *>(find_first("Grantee"));
   if (!acl_grantee)
     return false;
   string type_str;
   if (!acl_grantee->get_attr("xsi:type", type_str))
     return false;
-  ACLGranteeType_GS::set(type_str.c_str(), type);
+  ACLGranteeType::set(type_str.c_str(), type);
 
-  acl_permission = static_cast<ACLPermission_GS *>(find_first("Permission"));
+  acl_permission = static_cast<ACLPermission *>(find_first("Permission"));
   if (!acl_permission)
     return false;
 
@@ -160,23 +160,23 @@ bool ACLGrant_GS::xml_end(const char *el) {
 
   switch (type.get_type()) {
   case ACL_TYPE_CANON_USER:
-    acl_id = static_cast<ACLID_GS *>(acl_grantee->find_first("ID"));
+    acl_id = static_cast<ACLID *>(acl_grantee->find_first("ID"));
     if (!acl_id)
       return false;
     id = acl_id->to_str();
-    acl_name = static_cast<ACLDisplayName_GS *>(acl_grantee->find_first("DisplayName"));
+    acl_name = static_cast<ACLDisplayName *>(acl_grantee->find_first("DisplayName"));
     if (acl_name)
       name = acl_name->get_data();
     break;
   case ACL_TYPE_GROUP:
-    acl_uri = static_cast<ACLURI_GS *>(acl_grantee->find_first("URI"));
+    acl_uri = static_cast<ACLURI *>(acl_grantee->find_first("URI"));
     if (!acl_uri)
       return false;
     uri = acl_uri->get_data();
     group = uri_to_group(uri);
     break;
   case ACL_TYPE_EMAIL_USER:
-    acl_email = static_cast<ACLEmail_GS *>(acl_grantee->find_first("EmailAddress"));
+    acl_email = static_cast<ACLEmail *>(acl_grantee->find_first("EmailAddress"));
     if (!acl_email)
       return false;
     email = acl_email->get_data();
@@ -188,8 +188,8 @@ bool ACLGrant_GS::xml_end(const char *el) {
   return true;
 }
 
-void ACLGrant_GS::to_xml(CephContext *cct, ostream& out) {
-  ACLPermission_GS& perm = static_cast<ACLPermission_GS &>(permission);
+void ACLGrant::to_xml(CephContext *cct, ostream& out) {
+  ACLPermission& perm = static_cast<ACLPermission &>(permission);
 
   /* only show GS compatible permissions */
   if (!(perm.get_permissions() & (RGW_PERM_READ | RGW_PERM_WRITE)))
@@ -198,7 +198,7 @@ void ACLGrant_GS::to_xml(CephContext *cct, ostream& out) {
   string uri;
 
   out << "<Grant>" <<
-         "<Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"" << ACLGranteeType_GS::to_string(type) << "\">";
+         "<Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"" << ACLGranteeType::to_string(type) << "\">";
   switch (type.get_type()) {
   case ACL_TYPE_CANON_USER:
     out << "<ID>" << id << "</ID>";
@@ -224,7 +224,7 @@ void ACLGrant_GS::to_xml(CephContext *cct, ostream& out) {
   out << "</Grant>";
 }
 
-bool ACLGrant_GS::group_to_uri(ACLGroupTypeEnum group, string& uri)
+bool ACLGrant::group_to_uri(ACLGroupTypeEnum group, string& uri)
 {
   switch (group) {
   case ACL_GROUP_ALL_USERS:
@@ -238,7 +238,7 @@ bool ACLGrant_GS::group_to_uri(ACLGroupTypeEnum group, string& uri)
   }
 }
 
-ACLGroupTypeEnum ACLGrant_GS::uri_to_group(string& uri)
+ACLGroupTypeEnum ACLGrant::uri_to_group(string& uri)
 {
   if (uri.compare(rgw_uri_all_users) == 0)
     return ACL_GROUP_ALL_USERS;
@@ -248,28 +248,28 @@ ACLGroupTypeEnum ACLGrant_GS::uri_to_group(string& uri)
   return ACL_GROUP_NONE;
 }
 
-bool RGWAccessControlList_GS::xml_end(const char *el) {
+bool AccessControlList::xml_end(const char *el) {
   XMLObjIter iter = find("Grant");
-  ACLGrant_GS *grant = static_cast<ACLGrant_GS *>(iter.get_next());
+  ACLGrant *grant = static_cast<ACLGrant *>(iter.get_next());
   while (grant) {
     add_grant(grant);
-    grant = static_cast<ACLGrant_GS *>(iter.get_next());
+    grant = static_cast<ACLGrant *>(iter.get_next());
   }
   return true;
 }
 
-struct gs_acl_header {
+struct acl_header {
   int rgw_perm;
   const char *http_header;
 };
 
-static const char *get_acl_header(RGWEnv *env, const struct gs_acl_header *perm) {
+static const char *get_acl_header(RGWEnv *env, const struct acl_header *perm) {
   const char *header = perm->http_header;
   return env->get(header, NULL);
 }
 
 static int parse_grantee_str(RGWRados *store, string& grantee_str,
-        const struct gs_acl_header *perm, ACLGrant& grant)
+        const struct acl_header *perm, ::ACLGrant& grant)
 {
   string id_type, id_val_quoted;
   int rgw_perm = perm->rgw_perm;
@@ -309,7 +309,7 @@ static int parse_grantee_str(RGWRados *store, string& grantee_str,
 }
 
 static int parse_acl_header(RGWRados *store, RGWEnv *env,
-         const struct gs_acl_header *perm, std::list<ACLGrant>& _grants)
+         const struct acl_header *perm, std::list< ::ACLGrant >& _grants)
 {
   std::list<string> grantees;
   std::string hacl_str;
@@ -322,7 +322,7 @@ static int parse_acl_header(RGWRados *store, RGWEnv *env,
   get_str_list(hacl_str, ",", grantees);
 
   for (list<string>::iterator it = grantees.begin(); it != grantees.end(); ++it) {
-    ACLGrant grant;
+    ::ACLGrant grant;
     int ret = parse_grantee_str(store, *it, perm, grant);
     if (ret < 0)
       return ret;
@@ -333,12 +333,12 @@ static int parse_acl_header(RGWRados *store, RGWEnv *env,
   return 0;
 }
 
-int RGWAccessControlList_GS::create_canned(ACLOwner& owner, ACLOwner& bucket_owner, const string& canned_acl)
+int AccessControlList::create_canned(::ACLOwner& owner, ::ACLOwner& bucket_owner, const string& canned_acl)
 {
   acl_user_map.clear();
   grant_map.clear();
 
-  ACLGrant owner_grant;
+  ::ACLGrant owner_grant;
 
   string bid = bucket_owner.get_id();
   string bname = bucket_owner.get_display_name();
@@ -351,8 +351,8 @@ int RGWAccessControlList_GS::create_canned(ACLOwner& owner, ACLOwner& bucket_own
     return 0;
   }
 
-  ACLGrant bucket_owner_grant;
-  ACLGrant group_grant;
+  ::ACLGrant bucket_owner_grant;
+  ::ACLGrant group_grant;
   if (canned_acl.compare("public-read") == 0) {
     group_grant.set_group(ACL_GROUP_ALL_USERS, RGW_PERM_READ);
     add_grant(&group_grant);
@@ -379,7 +379,7 @@ int RGWAccessControlList_GS::create_canned(ACLOwner& owner, ACLOwner& bucket_own
   return 0;
 }
 
-int RGWAccessControlList_GS::create_from_grants(std::list<ACLGrant>& grants)
+int AccessControlList::create_from_grants(std::list< ::ACLGrant >& grants)
 {
   if (grants.empty())
     return -EINVAL;
@@ -387,29 +387,29 @@ int RGWAccessControlList_GS::create_from_grants(std::list<ACLGrant>& grants)
   acl_user_map.clear();
   grant_map.clear();
 
-  for (std::list<ACLGrant>::iterator it = grants.begin(); it != grants.end(); ++it) {
-    ACLGrant g = *it;
+  for (std::list< ::ACLGrant >::iterator it = grants.begin(); it != grants.end(); ++it) {
+    ::ACLGrant g = *it;
     add_grant(&g);
   }
 
   return 0;
 }
 
-bool RGWAccessControlPolicy_GS::xml_end(const char *el) {
-  RGWAccessControlList_GS *gsacl = static_cast<RGWAccessControlList_GS *>(find_first("AccessControlList"));
+bool AccessControlPolicy::xml_end(const char *el) {
+  AccessControlList *gsacl = static_cast<AccessControlList *>(find_first("AccessControlList"));
   if (!gsacl)
     return false;
 
   acl = *gsacl;
 
-  ACLOwner *owner_p = static_cast<ACLOwner_GS *>(find_first("Owner"));
+  ::ACLOwner *owner_p = static_cast<ACLOwner *>(find_first("Owner"));
   if (!owner_p)
     return false;
   owner = *owner_p;
   return true;
 }
 
-static const gs_acl_header acl_header_perms[] = {
+static const acl_header acl_header_perms[] = {
   {RGW_PERM_READ, "HTTP_X_AMZ_GRANT_READ"},
   {RGW_PERM_WRITE, "HTTP_X_AMZ_GRANT_WRITE"},
   {RGW_PERM_READ_ACP,"HTTP_X_AMZ_GRANT_READ_ACP"},
@@ -418,16 +418,16 @@ static const gs_acl_header acl_header_perms[] = {
   {0, NULL}
 };
 
-int RGWAccessControlPolicy_GS::create_from_headers(RGWRados *store, RGWEnv *env, ACLOwner& _owner)
+int AccessControlPolicy::create_from_headers(RGWRados *store, RGWEnv *env, ::ACLOwner& _owner)
 {
-  std::list<ACLGrant> grants;
+  std::list< ::ACLGrant > grants;
 
-  for (const struct gs_acl_header *p = acl_header_perms; p->rgw_perm; p++) {
+  for (const struct acl_header *p = acl_header_perms; p->rgw_perm; p++) {
     if (parse_acl_header(store, env, p, grants) < 0)
       return false;
   }
 
-  RGWAccessControlList_GS& _acl = static_cast<RGWAccessControlList_GS &>(acl);
+  AccessControlList& _acl = static_cast<AccessControlList &>(acl);
   int r = _acl.create_from_grants(grants);
 
   owner = _owner;
@@ -438,12 +438,12 @@ int RGWAccessControlPolicy_GS::create_from_headers(RGWRados *store, RGWEnv *env,
 /*
   can only be called on object that was parsed
  */
-int RGWAccessControlPolicy_GS::rebuild(RGWRados *store, ACLOwner *owner, RGWAccessControlPolicy& dest)
+int AccessControlPolicy::rebuild(RGWRados *store, ::ACLOwner *owner, RGWAccessControlPolicy& dest)
 {
   if (!owner)
     return -EINVAL;
 
-  ACLOwner *requested_owner = static_cast<ACLOwner_GS *>(find_first("Owner"));
+  ::ACLOwner *requested_owner = static_cast<ACLOwner *>(find_first("Owner"));
   if (requested_owner && requested_owner->get_id().compare(owner->get_id()) != 0) {
     return -EPERM;
   }
@@ -453,7 +453,7 @@ int RGWAccessControlPolicy_GS::rebuild(RGWRados *store, ACLOwner *owner, RGWAcce
     ldout(cct, 10) << "owner info does not exist" << dendl;
     return -EINVAL;
   }
-  ACLOwner& dest_owner = dest.get_owner();
+  ::ACLOwner& dest_owner = dest.get_owner();
   dest_owner.set_id(owner->get_id());
   dest_owner.set_name(owner_info.display_name);
 
@@ -462,12 +462,12 @@ int RGWAccessControlPolicy_GS::rebuild(RGWRados *store, ACLOwner *owner, RGWAcce
 
   RGWAccessControlList& dst_acl = dest.get_acl();
 
-  multimap<string, ACLGrant>& grant_map = acl.get_grant_map();
-  multimap<string, ACLGrant>::iterator iter;
+  multimap<string, ::ACLGrant>& grant_map = acl.get_grant_map();
+  multimap<string, ::ACLGrant>::iterator iter;
   for (iter = grant_map.begin(); iter != grant_map.end(); ++iter) {
-    ACLGrant& src_grant = iter->second;
-    ACLGranteeType& type = src_grant.get_type();
-    ACLGrant new_grant;
+    ::ACLGrant& src_grant = iter->second;
+    ::ACLGranteeType& type = src_grant.get_type();
+    ::ACLGrant new_grant;
     bool grant_ok = false;
     string uid;
     RGWUserInfo grant_user;
@@ -499,7 +499,7 @@ int RGWAccessControlPolicy_GS::rebuild(RGWRados *store, ACLOwner *owner, RGWAcce
           ldout(cct, 10) << "grant user does not exist:" << uid << dendl;
           return -EINVAL;
         } else {
-          ACLPermission& perm = src_grant.get_permission();
+          ::ACLPermission& perm = src_grant.get_permission();
           new_grant.set_canon(uid, grant_user.display_name, perm.get_permissions());
           grant_ok = true;
           string new_id;
@@ -511,7 +511,7 @@ int RGWAccessControlPolicy_GS::rebuild(RGWRados *store, ACLOwner *owner, RGWAcce
     case ACL_TYPE_GROUP:
       {
         string uri;
-        if (ACLGrant_GS::group_to_uri(src_grant.get_group(), uri)) {
+        if (ACLGrant::group_to_uri(src_grant.get_group(), uri)) {
           new_grant = src_grant;
           grant_ok = true;
           ldout(cct, 10) << "new grant: " << uri << dendl;
@@ -531,7 +531,7 @@ int RGWAccessControlPolicy_GS::rebuild(RGWRados *store, ACLOwner *owner, RGWAcce
   return 0;
 }
 
-bool RGWAccessControlPolicy_GS::compare_group_name(string& id, ACLGroupTypeEnum group)
+bool AccessControlPolicy::compare_group_name(string& id, ACLGroupTypeEnum group)
 {
   switch (group) {
   case ACL_GROUP_ALL_USERS:
@@ -546,29 +546,29 @@ bool RGWAccessControlPolicy_GS::compare_group_name(string& id, ACLGroupTypeEnum 
   return false;
 }
 
-XMLObj *RGWACLXMLParser_GS::alloc_obj(const char *el)
+XMLObj *ACLXMLParser::alloc_obj(const char *el)
 {
   XMLObj * obj = NULL;
   if (strcmp(el, "AccessControlPolicy") == 0) {
-    obj = new RGWAccessControlPolicy_GS(cct);
+    obj = new AccessControlPolicy(cct);
   } else if (strcmp(el, "Owner") == 0) {
-    obj = new ACLOwner_GS();
+    obj = new ACLOwner();
   } else if (strcmp(el, "AccessControlList") == 0) {
-    obj = new RGWAccessControlList_GS(cct);
+    obj = new AccessControlList(cct);
   } else if (strcmp(el, "ID") == 0) {
-    obj = new ACLID_GS();
+    obj = new ACLID();
   } else if (strcmp(el, "DisplayName") == 0) {
-    obj = new ACLDisplayName_GS();
+    obj = new ACLDisplayName();
   } else if (strcmp(el, "Grant") == 0) {
-    obj = new ACLGrant_GS();
+    obj = new ACLGrant();
   } else if (strcmp(el, "Grantee") == 0) {
-    obj = new ACLGrantee_GS();
+    obj = new ACLGrantee();
   } else if (strcmp(el, "Permission") == 0) {
-    obj = new ACLPermission_GS();
+    obj = new ACLPermission();
   } else if (strcmp(el, "URI") == 0) {
-    obj = new ACLURI_GS();
+    obj = new ACLURI();
   } else if (strcmp(el, "EmailAddress") == 0) {
-    obj = new ACLEmail_GS();
+    obj = new ACLEmail();
   }
 
   return obj;

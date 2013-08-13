@@ -5,11 +5,11 @@
 
 namespace rgw { namespace api { namespace gs {
 
-class RGWCopyObj_ObjStore_GS : public RGWCopyObj_ObjStore {
+class CopyObj : public RGWCopyObj_ObjStore {
   bool sent_header;
 public:
-  RGWCopyObj_ObjStore_GS() : sent_header(false) {}
-  ~RGWCopyObj_ObjStore_GS() {}
+  CopyObj() : sent_header(false) {}
+  ~CopyObj() {}
 
   int init_dest_policy();
   int get_params();
@@ -17,78 +17,78 @@ public:
   void send_response();
 };
 
-class RGWStatObj_ObjStore_GS : public RGWGetObj_ObjStore {
+class StatObj : public RGWGetObj_ObjStore {
 public:
-  RGWStatObj_ObjStore_GS() {}
-  ~RGWStatObj_ObjStore_GS() {}
+  StatObj() {}
+  ~StatObj() {}
 
   int send_response_data(bufferlist& bl, off_t ofs, off_t len);
 };
 
-class RGWDeleteObj_ObjStore_GS : public RGWDeleteObj_ObjStore {
+class DeleteObj : public RGWDeleteObj_ObjStore {
 public:
-  RGWDeleteObj_ObjStore_GS() {}
-  ~RGWDeleteObj_ObjStore_GS() {}
+  DeleteObj() {}
+  ~DeleteObj() {}
 
   void send_response();
 };
 
-class RGWGetObj_ObjStore_GS : public RGWGetObj_ObjStore
+class GetObj : public RGWGetObj_ObjStore
 {
 public:
-  RGWGetObj_ObjStore_GS() {}
-  ~RGWGetObj_ObjStore_GS() {}
+  GetObj() {}
+  ~GetObj() {}
 
   int send_response_data(bufferlist& bl, off_t ofs, off_t len);
 };
 
-class RGWPutObj_ObjStore_GS : public RGWPutObj_ObjStore {
+class PutObj : public RGWPutObj_ObjStore {
 public:
-  RGWPutObj_ObjStore_GS() {}
-  ~RGWPutObj_ObjStore_GS() {}
+  PutObj() {}
+  ~PutObj() {}
 
   int get_params();
   void send_response();
 };
 
-class RGWGetObjACLs_ObjStore_GS : public RGWGetACLs_ObjStore {
+class GetObjACLs : public RGWGetACLs_ObjStore {
 public:
-  RGWGetObjACLs_ObjStore_GS() {}
-  ~RGWGetObjACLs_ObjStore_GS() {}
+  GetObjACLs() {}
+  ~GetObjACLs() {}
 
   void send_response();
 };
 
-class RGWPutObjACLs_ObjStore_GS : public RGWPutACLs_ObjStore {
+class PutObjACLs : public RGWPutACLs_ObjStore {
 public:
-  RGWPutObjACLs_ObjStore_GS() {}
-  ~RGWPutObjACLs_ObjStore_GS() {}
+  PutObjACLs() {}
+  ~PutObjACLs() {}
 
   int get_policy_from_state(RGWRados *store, struct req_state *s, stringstream& ss);
   void send_response();
 };
 
-class RGWGetObjCORS_ObjStore_GS : public RGWGetCORS_ObjStore {
+class GetObjCORS : public RGWGetCORS_ObjStore {
 public:
-  RGWGetObjCORS_ObjStore_GS() {}
-  ~RGWGetObjCORS_ObjStore_GS() {}
+  GetObjCORS() {}
+  ~GetObjCORS() {}
 
   void send_response();
 };
 
-class RGWPutObjCORS_ObjStore_GS : public RGWPutCORS_ObjStore {
+class PutObjCORS : public RGWPutCORS_ObjStore {
 public:
-  RGWPutObjCORS_ObjStore_GS() {}
-  ~RGWPutObjCORS_ObjStore_GS() {}
+  PutObjCORS() {}
+  ~PutObjCORS() {}
 
   int get_params();
   void send_response();
 };
 
-class RGWHandler_ObjStore_Obj_GS : public RGWHandler_ObjStore_GS {
+class ObjHandler : public Handler {
 public:
-  RGWHandler_ObjStore_Obj_GS() {}
-  virtual ~RGWHandler_ObjStore_Obj_GS() {}
+  ObjHandler() {}
+  virtual ~ObjHandler() {}
 protected:
   bool is_acl_op() { return s->info.args.exists("acl"); }
   bool is_cors_op() { return s->info.args.exists("cors"); }

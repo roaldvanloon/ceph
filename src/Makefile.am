@@ -406,10 +406,10 @@ librgw_a_SOURCES =  \
   rgw/apis/gs/auth.cc \
   rgw/apis/gs/cors.cc \
   rgw/apis/gs/mgr.cc \
+  rgw/apis/gs/handler.cc \ 
   rgw/apis/gs/rest_bucket.cc \
   rgw/apis/gs/rest_obj.cc \
-  rgw/apis/gs/rest_service.cc \
-  rgw/apis/gs/rgw_api_gs.cc 
+  rgw/apis/gs/rest_service.cc
 librgw_a_CFLAGS = ${CRYPTO_CFLAGS} ${AM_CFLAGS}
 librgw_a_CXXFLAGS = -Woverloaded-virtual ${AM_CXXFLAGS}
 noinst_LIBRARIES += librgw.a

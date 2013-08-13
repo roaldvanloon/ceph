@@ -5,10 +5,10 @@
 
 namespace rgw { namespace api { namespace gs {
 
-class RGWListBuckets_ObjStore_GS : public RGWListBuckets_ObjStore {
+class ListBuckets : public RGWListBuckets_ObjStore {
 public:
-  RGWListBuckets_ObjStore_GS() {}
-  ~RGWListBuckets_ObjStore_GS() {}
+  ListBuckets() {}
+  ~ListBuckets() {}
 
   int get_params() {
     limit = 0; /* no limit */
@@ -19,10 +19,10 @@ public:
   virtual void send_response_end();
 };
 
-class RGWHandler_ObjStore_Service_GS : public RGWHandler_ObjStore_GS {
+class ServiceHandler : public Handler {
 public:
-  RGWHandler_ObjStore_Service_GS() {}
-  virtual ~RGWHandler_ObjStore_Service_GS() {}
+  ServiceHandler() {}
+  virtual ~ServiceHandler() {}
 protected:
   RGWOp *op_get();
 };

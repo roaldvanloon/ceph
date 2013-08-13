@@ -16,31 +16,31 @@ class RGWEnv;
 
 namespace rgw { namespace api { namespace gs {
 
-class ACLPermission_GS : public ACLPermission, public XMLObj
+class ACLPermission : public ::ACLPermission, public XMLObj
 {
 public:
-  ACLPermission_GS() {}
-  ~ACLPermission_GS() {}
+  ACLPermission() {}
+  ~ACLPermission() {}
 
   bool xml_end(const char *el);
   void to_xml(ostream& out);
 };
 
-class ACLGrantee_GS : public ACLGrantee, public XMLObj
+class ACLGrantee : public ::ACLGrantee, public XMLObj
 {
 public:
-  ACLGrantee_GS() {}
-  ~ACLGrantee_GS() {}
+  ACLGrantee() {}
+  ~ACLGrantee() {}
 
   bool xml_start(const char *el, const char **attr);
 };
 
 
-class ACLGrant_GS : public ACLGrant, public XMLObj
+class ACLGrant : public ::ACLGrant, public XMLObj
 {
 public:
-  ACLGrant_GS() {}
-  ~ACLGrant_GS() {}
+  ACLGrant() {}
+  ~ACLGrant() {}
 
   void to_xml(CephContext *cct, ostream& out);
   bool xml_end(const char *el);
@@ -50,32 +50,32 @@ public:
   static bool group_to_uri(ACLGroupTypeEnum group, string& uri);
 };
 
-class RGWAccessControlList_GS : public RGWAccessControlList, public XMLObj
+class AccessControlList : public RGWAccessControlList, public XMLObj
 {
 public:
-  RGWAccessControlList_GS(CephContext *_cct) : RGWAccessControlList(_cct) {}
-  ~RGWAccessControlList_GS() {}
+  AccessControlList(CephContext *_cct) : RGWAccessControlList(_cct) {}
+  ~AccessControlList() {}
 
   bool xml_end(const char *el);
   void to_xml(ostream& out) {
-    multimap<string, ACLGrant>::iterator iter;
+    multimap<string, ::ACLGrant>::iterator iter;
     out << "<AccessControlList>";
     for (iter = grant_map.begin(); iter != grant_map.end(); ++iter) {
-      ACLGrant_GS& grant = static_cast<ACLGrant_GS &>(iter->second);
+      ACLGrant& grant = static_cast<ACLGrant &>(iter->second);
       grant.to_xml(cct, out);
     }
     out << "</AccessControlList>";
   }
 
-  int create_canned(ACLOwner& owner, ACLOwner& bucket_owner, const string& canned_acl);
-  int create_from_grants(std::list<ACLGrant>& grants);
+  int create_canned(::ACLOwner& owner, ::ACLOwner& bucket_owner, const string& canned_acl);
+  int create_from_grants(std::list< ::ACLGrant>& grants);
 };
 
-class ACLOwner_GS : public ACLOwner, public XMLObj
+class ACLOwner : public ::ACLOwner, public XMLObj
 {
 public:
-  ACLOwner_GS() {}
-  ~ACLOwner_GS() {}
+  ACLOwner() {}
+  ~ACLOwner() {}
 
   bool xml_end(const char *el);
   void to_xml(ostream& out) {
@@ -88,45 +88,45 @@ public:
   }
 };
 
-class RGWAccessControlPolicy_GS : public RGWAccessControlPolicy, public XMLObj
+class AccessControlPolicy : public RGWAccessControlPolicy, public XMLObj
 {
 public:
-  RGWAccessControlPolicy_GS(CephContext *_cct) : RGWAccessControlPolicy(_cct) {}
-  ~RGWAccessControlPolicy_GS() {}
+  AccessControlPolicy(CephContext *_cct) : RGWAccessControlPolicy(_cct) {}
+  ~AccessControlPolicy() {}
 
   bool xml_end(const char *el);
 
   void to_xml(ostream& out) {
     out << "<AccessControlPolicy xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">";
-    ACLOwner_GS& _owner = static_cast<ACLOwner_GS &>(owner);
-    RGWAccessControlList_GS& _acl = static_cast<RGWAccessControlList_GS &>(acl);
+    ACLOwner& _owner = static_cast<ACLOwner &>(owner);
+    AccessControlList& _acl = static_cast<AccessControlList &>(acl);
     _owner.to_xml(out);
     _acl.to_xml(out);
     out << "</AccessControlPolicy>";
   }
-  int rebuild(RGWRados *store, ACLOwner *owner, RGWAccessControlPolicy& dest);
+  int rebuild(RGWRados *store, ::ACLOwner *owner, RGWAccessControlPolicy& dest);
   bool compare_group_name(string& id, ACLGroupTypeEnum group);
 
-  virtual int create_canned(ACLOwner& _owner, ACLOwner& bucket_owner, string canned_acl) {
-    RGWAccessControlList_GS& _acl = static_cast<RGWAccessControlList_GS &>(acl);
+  virtual int create_canned(::ACLOwner& _owner, ::ACLOwner& bucket_owner, string canned_acl) {
+    AccessControlList& _acl = static_cast<AccessControlList &>(acl);
     int ret = _acl.create_canned(_owner, bucket_owner, canned_acl);
     owner = _owner;
     return ret;
   }
-  int create_from_headers(RGWRados *store, RGWEnv *env, ACLOwner& _owner);
+  int create_from_headers(RGWRados *store, RGWEnv *env, ::ACLOwner& _owner);
 };
 
 /**
  * Interfaces with the webserver's XML handling code
  * to parse it in a way that makes sense for the rgw.
  */
-class RGWACLXMLParser_GS : public RGWXMLParser
+class ACLXMLParser : public RGWXMLParser
 {
   CephContext *cct;
 
   XMLObj *alloc_obj(const char *el);
 public:
-  RGWACLXMLParser_GS(CephContext *_cct) : cct(_cct) {}
+  ACLXMLParser(CephContext *_cct) : cct(_cct) {}
 };
 
 }}}

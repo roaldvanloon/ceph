@@ -5,88 +5,88 @@
 
 namespace rgw { namespace api { namespace gs {
 
-class RGWListBucket_ObjStore_GS : public RGWListBucket_ObjStore {
+class ListBucket : public RGWListBucket_ObjStore {
 public:
-  RGWListBucket_ObjStore_GS() {
+  ListBucket() {
     default_max = 1000;
   }
-  ~RGWListBucket_ObjStore_GS() {}
+  ~ListBucket() {}
 
   int get_params();
   void send_response();
 };
 
-class RGWCreateBucket_ObjStore_GS : public RGWCreateBucket_ObjStore {
+class CreateBucket : public RGWCreateBucket_ObjStore {
 public:
-  RGWCreateBucket_ObjStore_GS() {}
-  ~RGWCreateBucket_ObjStore_GS() {}
+  CreateBucket() {}
+  ~CreateBucket() {}
 
   int get_params();
   void send_response();
 };
 
-class RGWDeleteBucket_ObjStore_GS : public RGWDeleteBucket_ObjStore {
+class DeleteBucket : public RGWDeleteBucket_ObjStore {
 public:
-  RGWDeleteBucket_ObjStore_GS() {}
-  ~RGWDeleteBucket_ObjStore_GS() {}
+  DeleteBucket() {}
+  ~DeleteBucket() {}
 
   void send_response();
 };
 
-class RGWGetBucketLogging_ObjStore_GS : public RGWGetBucketLogging {
+class GetBucketLogging : public RGWGetBucketLogging {
 public:
-  RGWGetBucketLogging_ObjStore_GS() {}
-  ~RGWGetBucketLogging_ObjStore_GS() {}
+  GetBucketLogging() {}
+  ~GetBucketLogging() {}
 
   void send_response();
 };
 
-class RGWStatBucket_ObjStore_GS : public RGWStatBucket_ObjStore {
+class StatBucket : public RGWStatBucket_ObjStore {
 public:
-  RGWStatBucket_ObjStore_GS() {}
-  ~RGWStatBucket_ObjStore_GS() {}
+  StatBucket() {}
+  ~StatBucket() {}
 
   void send_response();
 };
 
-class RGWGetBucketACLs_ObjStore_GS : public RGWGetACLs_ObjStore {
+class GetBucketACLs : public RGWGetACLs_ObjStore {
 public:
-  RGWGetBucketACLs_ObjStore_GS() {}
-  ~RGWGetBucketACLs_ObjStore_GS() {}
+  GetBucketACLs() {}
+  ~GetBucketACLs() {}
 
   void send_response();
 };
 
-class RGWPutBucketACLs_ObjStore_GS : public RGWPutACLs_ObjStore {
+class PutBucketACLs : public RGWPutACLs_ObjStore {
 public:
-  RGWPutBucketACLs_ObjStore_GS() {}
-  ~RGWPutBucketACLs_ObjStore_GS() {}
+  PutBucketACLs() {}
+  ~PutBucketACLs() {}
 
   int get_policy_from_state(RGWRados *store, struct req_state *s, stringstream& ss);
   void send_response();
 };
 
-class RGWGetBucketCORS_ObjStore_GS : public RGWGetCORS_ObjStore {
+class GetBucketCORS : public RGWGetCORS_ObjStore {
 public:
-  RGWGetBucketCORS_ObjStore_GS() {}
-  ~RGWGetBucketCORS_ObjStore_GS() {}
+  GetBucketCORS() {}
+  ~GetBucketCORS() {}
 
   void send_response();
 };
 
-class RGWPutBucketCORS_ObjStore_GS : public RGWPutCORS_ObjStore {
+class PutBucketCORS : public RGWPutCORS_ObjStore {
 public:
-  RGWPutBucketCORS_ObjStore_GS() {}
-  ~RGWPutBucketCORS_ObjStore_GS() {}
+  PutBucketCORS() {}
+  ~PutBucketCORS() {}
 
   int get_params();
   void send_response();
 };
 
-class RGWHandler_ObjStore_Bucket_GS : public RGWHandler_ObjStore_GS {
+class BucketHandler : public Handler {
 public:
-  RGWHandler_ObjStore_Bucket_GS() {}
-  virtual ~RGWHandler_ObjStore_Bucket_GS() {}
+  BucketHandler() {}
+  virtual ~BucketHandler() {}
 protected:
   bool is_websiteconfig_op() { return s->info.args.exists("websiteConfig"); }
   bool is_versioning_op() { return s->info.args.exists("versioning"); }
