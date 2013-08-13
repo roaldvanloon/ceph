@@ -401,7 +401,15 @@ librgw_a_SOURCES =  \
 	rgw/rgw_cors_s3.cc \
         rgw/rgw_auth_s3.cc \
 	rgw/rgw_metadata.cc \
-	rgw/rgw_replica_log.cc
+	rgw/rgw_replica_log.cc \
+  rgw/apis/gs/acl.cc \
+  rgw/apis/gs/auth.cc \
+  rgw/apis/gs/cors.cc \
+  rgw/apis/gs/mgr.cc \
+  rgw/apis/gs/rest_bucket.cc \
+  rgw/apis/gs/rest_obj.cc \
+  rgw/apis/gs/rest_service.cc \
+  rgw/apis/gs/rgw_api_gs.cc 
 librgw_a_CFLAGS = ${CRYPTO_CFLAGS} ${AM_CFLAGS}
 librgw_a_CXXFLAGS = -Woverloaded-virtual ${AM_CXXFLAGS}
 noinst_LIBRARIES += librgw.a
@@ -2248,6 +2256,12 @@ noinst_HEADERS = \
 	rgw/rgw_usage.h\
 	rgw/rgw_user.h\
 	rgw/rgw_bucket.h\
+  rgw/apis/gs/acl.h\
+  rgw/apis/gs/cors.h\
+  rgw/apis/gs/rest_bucket.h\
+  rgw/apis/gs/rest_obj.h\
+  rgw/apis/gs/rest_service.h\
+  rgw/apis/gs/rgw_api_gs.h\
         sample.ceph.conf\
 	tools/common.h\
 	test/osd/RadosModel.h\

@@ -52,6 +52,8 @@
 #include "rgw_tools.h"
 #include "rgw_resolve.h"
 
+#include "rgw/apis/gs/rgw_api_gs.h"
+
 #include <map>
 #include <string>
 #include <vector>
@@ -563,6 +565,10 @@ int main(int argc, const char **argv)
     admin_resource->register_resource("replica_log", new RGWRESTMgr_ReplicaLog);
     admin_resource->register_resource("config", new RGWRESTMgr_Config);
     rest.register_resource(g_conf->rgw_admin_entry, admin_resource);
+  }
+
+  if (apis_map.count("gs") > 0) {
+    rest.register_resource(g_conf->rgw_gs_url_prefix, set_logging(new rgw::api::gs::RGWRESTMgr_GS));
   }
 
   OpsLogSocket *olog = NULL;

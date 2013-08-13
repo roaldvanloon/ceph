@@ -618,7 +618,7 @@ OPTION(rbd_default_features, OPT_INT, 3) // 1 for layering, 3 for layering+strip
 OPTION(nss_db_path, OPT_STR, "") // path to nss db
 
 OPTION(rgw_data, OPT_STR, "/var/lib/ceph/radosgw/$cluster-$id")
-OPTION(rgw_enable_apis, OPT_STR, "s3, swift, swift_auth, admin")
+OPTION(rgw_enable_apis, OPT_STR, "gs, s3, swift, swift_auth, admin")
 OPTION(rgw_cache_enabled, OPT_BOOL, true)   // rgw cache enabled
 OPTION(rgw_cache_lru_size, OPT_INT, 10000)   // num of entries in rgw cache
 OPTION(rgw_socket_path, OPT_STR, "")   // path to unix domain socket, if not specified, rgw will not run as external fcgi
@@ -631,6 +631,7 @@ OPTION(rgw_swift_url, OPT_STR, "")             // the swift url, being published
 OPTION(rgw_swift_url_prefix, OPT_STR, "swift") // entry point for which a url is considered a swift url
 OPTION(rgw_swift_auth_url, OPT_STR, "")        // default URL to go and verify tokens for v1 auth (if not using internal swift auth)
 OPTION(rgw_swift_auth_entry, OPT_STR, "auth")  // entry point for which a url is considered a swift auth url
+OPTION(rgw_gs_url_prefix, OPT_STR, "gs")       // entry point for which a url is considered a google storage url
 OPTION(rgw_keystone_url, OPT_STR, "")  // url for keystone server
 OPTION(rgw_keystone_admin_token, OPT_STR, "")  // keystone admin token (shared secret)
 OPTION(rgw_keystone_accepted_roles, OPT_STR, "Member, admin")  // roles required to serve requests
@@ -671,7 +672,8 @@ OPTION(rgw_gc_max_objs, OPT_INT, 32)
 OPTION(rgw_gc_obj_min_wait, OPT_INT, 2 * 3600)    // wait time before object may be handled by gc
 OPTION(rgw_gc_processor_max_time, OPT_INT, 3600)  // total run time for a single gc processor work
 OPTION(rgw_gc_processor_period, OPT_INT, 3600)  // gc processor cycle time
-OPTION(rgw_s3_success_create_obj_status, OPT_INT, 0) // alternative success status response for create-obj (0 - default)
+OPTION(rgw_s3_success_create_obj_status, OPT_INT, 0) // alternative success status response for create-obj for S3 (0 - default)
+OPTION(rgw_gs_success_create_obj_status, OPT_INT, 0) // alternative success status response for create-obj for GS (0 - default)
 OPTION(rgw_resolve_cname, OPT_BOOL, false)  // should rgw try to resolve hostname as a dns cname record
 OPTION(rgw_obj_stripe_size, OPT_INT, 4 << 20)
 OPTION(rgw_extended_http_attrs, OPT_STR, "") // list of extended attrs that can be set on objects (beyond the default)
@@ -679,6 +681,7 @@ OPTION(rgw_exit_timeout_secs, OPT_INT, 120) // how many seconds to wait for proc
 OPTION(rgw_get_obj_window_size, OPT_INT, 16 << 20) // window size in bytes for single get obj request
 OPTION(rgw_get_obj_max_req_size, OPT_INT, 4 << 20) // max length of a single get obj rados op
 OPTION(rgw_relaxed_s3_bucket_names, OPT_BOOL, false) // enable relaxed bucket name rules for US region buckets
+OPTION(rgw_relaxed_gs_bucket_names, OPT_BOOL, false) // enable relaxed bucket name rules for US region buckets
 OPTION(rgw_list_buckets_max_chunk, OPT_INT, 1000) // max buckets to retrieve in a single op when listing user buckets
 OPTION(rgw_md_log_max_shards, OPT_INT, 64) // max shards for metadata log
 OPTION(rgw_num_zone_opstate_shards, OPT_INT, 128) // max shards for keeping inter-region copy progress info

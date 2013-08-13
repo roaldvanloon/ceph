@@ -131,6 +131,41 @@ using ceph::crypto::MD5;
 #define ERR_USER_SUSPENDED       2100
 #define ERR_INTERNAL_ERROR       2200
 
+/* mainly specific to google storage api */
+#define ERR_TEMPORARY_REDIRECT          3000
+#define ERR_RESUME_INCOMPLETE           3001
+#define ERR_AMBIGUOUS_GRANT             3002
+#define ERR_CREDENTIALS_NOT_SUPPORTED   3003
+#define ERR_EXCESS_HEADERS              3004
+#define ERR_TOKEN_EXPIRED               3005
+#define ERR_INCOMPLETE_BODY             3006
+#define ERR_POST_TOO_LARGE              3007
+#define ERR_INLINE_DATA_TOO_LARGE       3008
+#define ERR_INVALID_LOCATION            3009
+#define ERR_INVALID_POLICY              3020
+#define ERR_INVALID_STORAGECLASS        3021
+#define ERR_INVALID_TOKEN               3022
+#define ERR_INVALID_URI                 3023
+#define ERR_MALFORMED_ACL               3024
+#define ERR_MALFORMED_HEADER            3025
+#define ERR_MALFORMED_POST              3026
+#define ERR_MALFORMED_XML               3027
+#define ERR_REQUEST_TOO_BIG             3028
+#define ERR_PREDATA_TOO_BIG             3029
+#define ERR_METADATA_TOO_BIG            3030
+#define ERR_MISSING_BODY                3031
+#define ERR_MISSING_SECHEADER           3032
+#define ERR_NO_LOGGING_FOR_KEY          3033
+#define ERR_REQUEST_IS_NOT_MULTIPART    3034
+#define ERR_TOKEN_REFRESH_REQUIRED      3035
+#define ERR_UNEXPECTED_CONTENT          3036
+#define ERR_UNSUPPORTED_ACL             3037
+#define ERR_UNSPECIFIED_KEY             3038
+#define ERR_ALREADY_YOURS               3039
+#define ERR_OP_ABORTED                  3040
+#define ERR_NOT_IMPLEMENTED             3041
+#define ERR_SLOWDOWN                    3042
+
 typedef void *RGWAccessHandle;
 
 
@@ -924,6 +959,7 @@ public:
   std::string key;
   std::string ns;
   std::string object;
+  std::string version;
 
   rgw_obj() {}
   rgw_obj(const char *b, const char *o) {
