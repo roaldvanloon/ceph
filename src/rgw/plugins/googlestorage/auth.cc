@@ -131,7 +131,7 @@ int Auth::authorize(RGWRados *store, struct req_state *s)
   if (strncmp(s->http_auth, "GOOG1 ", 6)==0)
     return authorize_goog1_signature(store, s);
 
-  if (strncmp(s->http_auth, "OAuth ", 6)==0)
+  if (strncmp(s->http_auth, "Bearer ", 7)==0)
     return authorize_oauth_signature(store, s);
 
   return -EPERM;

@@ -108,22 +108,24 @@ int Handler::init_from_header(struct req_state *s, int default_formatter, bool c
   }
 
   pos = req.find('/');
-  if (pos >= 0) {
+  if (pos > 0) {
     first = req.substr(0, pos);
   } else {
     first = req;
   }
 
   if (!s->bucket_name) {
-    s->bucket_name_str = first;
-    s->bucket_name = strdup(s->bucket_name_str.c_str());
+    if (first.length()) {
+      s->bucket_name_str = first;
+      s->bucket_name = strdup(s->bucket_name_str.c_str());
 
-    if (pos >= 0) {
-      string encoded_obj_str = req.substr(pos+1);
-      s->object_str = encoded_obj_str;
+      if (pos >= 0) {
+        string encoded_obj_str = req.substr(pos+1);
+        s->object_str = encoded_obj_str;
 
-      if (s->object_str.size() > 0) {
-        s->object = strdup(s->object_str.c_str());
+        if (s->object_str.size() > 0) {
+          s->object = strdup(s->object_str.c_str());
+        }
       }
     }
   } else {
@@ -141,11 +143,11 @@ int Handler::init_from_header(struct req_state *s, int default_formatter, bool c
   if (iter == s->info.x_meta_map.end())
     return -ERR_MALFORMED_HEADER;
   api_version = iter->second;
-  if (api_version != "1" && api_version != "2") // currently only allow v1.0 and v2.0
+  if (api_version != "2") { // currently only allow XML v2.0
+    dout(2) << "A request was made for unsupported API version " << api_version << dendl;
     return -EINVAL;
+  }
   s->info.x_meta_map.erase(iter);
-
-  dout(0) << "Using API version " << api_version << dendl;
 
   return 0;
 }

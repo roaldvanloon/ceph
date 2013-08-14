@@ -369,6 +369,24 @@ lib_LTLIBRARIES += librados.la
 
 if WITH_RADOSGW
 
+# rgw apis/plugins
+librgw_googlestorage_la_SOURCES = \
+  rgw/plugins/googlestorage/acl.cc \
+  rgw/plugins/googlestorage/auth.cc \
+  rgw/plugins/googlestorage/cors.cc \
+  rgw/plugins/googlestorage/mgr.cc \
+  rgw/plugins/googlestorage/handler.cc \
+  rgw/plugins/googlestorage/rest_bucket.cc \
+  rgw/plugins/googlestorage/rest_obj.cc \
+  rgw/plugins/googlestorage/rest_service.cc \
+  rgw/plugins/googlestorage/rgw_api_gs.cc
+librgw_googlestorage_la_CFLAGS = ${CRYPTO_CFLAGS} ${AM_CFLAGS}
+librgw_googlestorage_la_CXXFLAGS = -Woverloaded-virtual ${AM_CXXFLAGS}
+librgw_googlestorage_la_LDFLAGS = ${AM_LDFLAGS} $(PTHREAD_LIBS) $(EXTRALIBS) \
+    -avoid-version -module -shared \
+    -export-dynamic -export-symbols-regex '^rgw_plugin_(init|exit)$$'
+lib_LTLIBRARIES += librgw_googlestorage.la
+
 # rgw
 librgw_a_SOURCES =  \
 	rgw/librgw.cc \
@@ -401,15 +419,7 @@ librgw_a_SOURCES =  \
 	rgw/rgw_cors_s3.cc \
         rgw/rgw_auth_s3.cc \
 	rgw/rgw_metadata.cc \
-	rgw/rgw_replica_log.cc \
-  rgw/apis/gs/acl.cc \
-  rgw/apis/gs/auth.cc \
-  rgw/apis/gs/cors.cc \
-  rgw/apis/gs/mgr.cc \
-  rgw/apis/gs/handler.cc \ 
-  rgw/apis/gs/rest_bucket.cc \
-  rgw/apis/gs/rest_obj.cc \
-  rgw/apis/gs/rest_service.cc
+	rgw/rgw_replica_log.cc
 librgw_a_CFLAGS = ${CRYPTO_CFLAGS} ${AM_CFLAGS}
 librgw_a_CXXFLAGS = -Woverloaded-virtual ${AM_CXXFLAGS}
 noinst_LIBRARIES += librgw.a
@@ -2256,12 +2266,6 @@ noinst_HEADERS = \
 	rgw/rgw_usage.h\
 	rgw/rgw_user.h\
 	rgw/rgw_bucket.h\
-  rgw/apis/gs/acl.h\
-  rgw/apis/gs/cors.h\
-  rgw/apis/gs/rest_bucket.h\
-  rgw/apis/gs/rest_obj.h\
-  rgw/apis/gs/rest_service.h\
-  rgw/apis/gs/rgw_api_gs.h\
         sample.ceph.conf\
 	tools/common.h\
 	test/osd/RadosModel.h\

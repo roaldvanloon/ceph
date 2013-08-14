@@ -1,10 +1,15 @@
 #ifndef CEPH_RGW_API_GS_H
 #define CEPH_RGW_API_GS_H
 
+#include "rgw/rgw_plugin.h"
 #include "rgw/rgw_rest.h"
 
 #include "acl.h"
 #include "cors.h"
+
+extern "C" int gs_api_loader(void *p);
+extern "C" rgw_plugin* rgw_plugin_init();
+extern "C" void rgw_plugin_exit();
 
 namespace rgw { namespace api { namespace gs {
 

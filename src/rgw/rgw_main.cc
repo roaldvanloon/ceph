@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <signal.h>
+#include <dlfcn.h>
 
 #include <curl/curl.h>
 
@@ -51,8 +52,7 @@
 #include "rgw_log.h"
 #include "rgw_tools.h"
 #include "rgw_resolve.h"
-
-#include "rgw/apis/gs/rgw_api_gs.h"
+#include "rgw_plugin.h"
 
 #include <map>
 #include <string>
@@ -567,8 +567,45 @@ int main(int argc, const char **argv)
     rest.register_resource(g_conf->rgw_admin_entry, admin_resource);
   }
 
-  if (apis_map.count("gs") > 0) {
-    rest.register_resource(g_conf->rgw_gs_url_prefix, set_logging(new rgw::api::gs::RGWRESTMgr_GS));
+  /* Load dynamic plugins */
+  list<string> plugins;
+  get_str_list(g_conf->rgw_load_plugins, plugins);
+
+  map<string, rgw_plugin*> plugin_map;
+  for (list<string>::iterator li = plugins.begin(); li != plugins.end(); ++li) {
+    string libname = string("librgw_") + *li + string(".so");
+    void *h = dlopen(libname.c_str(), RTLD_LAZY);
+    if (!h) {
+      dout(0) << "WARNING: unable to load plugin " << *li << ": " << dlerror() << dendl;
+    } else {
+      rgw_plugin* (*init_func)();
+      char* err;
+      *(void **) (&init_func) = dlsym(h, "rgw_plugin_init");
+      if ((err=dlerror()) != NULL)  {
+        dout(0) << "WARNING: unable to initialize plugin " << *li << ": " << err << dendl;
+      } else {
+        plugin_map[*li] = (*init_func)();
+      }
+    }
+  }
+  dlerror();
+
+  /* Init dynamic plugins */
+  for (map<string, rgw_plugin*>::iterator li = plugin_map.begin(); li != plugin_map.end(); ++li) {
+    rgw_plugin* plugindef = li->second;
+    int load_ret;
+    switch (plugindef->type) {
+    case RGW_PLUGIN_TYPE_API:
+      if ((load_ret=plugindef->loader(&rest)) != 0) {
+        dout(0) << "Loading plugin (API): " << li->first << "... FAILED (" << load_ret << ")" << dendl;
+      } else {
+        dout(0) << "Loading plugin (API): " << li->first << "... OK" << dendl;
+      }
+      break;
+    default:
+      dout(0) << "WARNING: Plugin is of unknown type: " << li->first << " (" << plugindef->type << ")" << dendl;
+      break;
+    }
   }
 
   OpsLogSocket *olog = NULL;
