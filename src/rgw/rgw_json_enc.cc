@@ -703,4 +703,3 @@ void RGWDataChangesLogInfo::decode_json(JSONObj *obj)
   JSONDecoder::decode_json("marker", marker, obj);
   JSONDecoder::decode_json("last_update", last_update, obj);
 }
-

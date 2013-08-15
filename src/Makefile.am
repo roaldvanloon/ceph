@@ -369,6 +369,22 @@ lib_LTLIBRARIES += librados.la
 
 if WITH_RADOSGW
 
+# rgw plugins
+# rgw apis/plugins
+librgw_keystone_la_SOURCES = \
+  rgw/plugins/keystone/cache.cc \
+  rgw/plugins/keystone/handlers.cc \
+  rgw/plugins/keystone/httpclient.cc \
+  rgw/plugins/keystone/plugin.cc \
+  rgw/plugins/keystone/token.cc
+librgw_keystone_la_CFLAGS = ${CRYPTO_CFLAGS} ${AM_CFLAGS}
+librgw_keystone_la_CXXFLAGS = -Woverloaded-virtual ${AM_CXXFLAGS}
+librgw_keystone_la_LDFLAGS = ${AM_LDFLAGS} $(PTHREAD_LIBS) $(EXTRALIBS) \
+    -avoid-version -module -shared \
+    -export-dynamic -export-symbols-regex '^rgw_plugin_(init|exit)$$'
+lib_LTLIBRARIES += librgw_keystone.la
+
+
 # rgw
 librgw_a_SOURCES =  \
 	rgw/librgw.cc \
@@ -401,9 +417,12 @@ librgw_a_SOURCES =  \
 	rgw/rgw_cors_s3.cc \
         rgw/rgw_auth_s3.cc \
 	rgw/rgw_metadata.cc \
-	rgw/rgw_replica_log.cc
+	rgw/rgw_replica_log.cc \
+	rgw/rgw_auth.cc \
+	rgw/rgw_plugin.cc
 librgw_a_CFLAGS = ${CRYPTO_CFLAGS} ${AM_CFLAGS}
 librgw_a_CXXFLAGS = -Woverloaded-virtual ${AM_CXXFLAGS}
+librgw_a_LDFLAGS = -rdynamic -export-dynamic
 noinst_LIBRARIES += librgw.a
 
 my_radosgw_ldadd = \

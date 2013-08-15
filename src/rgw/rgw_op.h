@@ -846,6 +846,7 @@ public:
   RGWHandler() : store(NULL), s(NULL) {}
   virtual ~RGWHandler();
   virtual int init(RGWRados *store, struct req_state *_s, RGWClientIO *cio);
+  virtual int init_auth_pipeline(RGWAuthPipeline* p) { return 0; }
 
   virtual RGWOp *get_op(RGWRados *store);
   virtual void put_op(RGWOp *op);

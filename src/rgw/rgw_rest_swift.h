@@ -150,7 +150,11 @@ public:
   int validate_bucket_name(const string& bucket);
 
   int init(RGWRados *store, struct req_state *state, RGWClientIO *cio);
-  int authorize();
+  virtual int authorize() {
+    if (s->auth_pipeline==NULL)
+      return -EINVAL;
+    return s->auth_pipeline->authorize(store, s);
+  }
 
   RGWAccessControlPolicy *alloc_policy() { return NULL; /* return new RGWAccessControlPolicy_SWIFT; */ }
   void free_policy(RGWAccessControlPolicy *policy) { delete policy; }
@@ -206,6 +210,10 @@ class RGWRESTMgr_SWIFT : public RGWRESTMgr {
 public:
   RGWRESTMgr_SWIFT() {}
   virtual ~RGWRESTMgr_SWIFT() {}
+
+  virtual int init_auth_pipeline(RGWAuthPipeline* p) {
+    return p->init(g_conf->rgw_swift_auth_pipeline);
+  }
 
   virtual RGWRESTMgr *get_resource_mgr(struct req_state *s, const string& uri) {
     return this;
