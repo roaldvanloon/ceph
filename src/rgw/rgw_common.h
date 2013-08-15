@@ -762,6 +762,8 @@ struct RGWEnv;
 
 class RGWClientIO;
 
+class RGWAuthPipeline;
+
 struct req_info {
   RGWEnv *env;
   XMLArgs args;
@@ -818,6 +820,7 @@ struct req_state {
 
    bool has_bad_meta;
 
+   RGWAuthPipeline *auth_pipeline;
    RGWUserInfo user; 
    RGWAccessControlPolicy *bucket_acl;
    RGWAccessControlPolicy *object_acl;

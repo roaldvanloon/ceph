@@ -4,7 +4,8 @@
 
 #include "rgw_op.h"
 #include "rgw_formats.h"
-
+#include "rgw_plugin.h"
+#include "rgw_auth.h"
 
 extern std::map<std::string, std::string> rgw_to_http_attrs;
 
@@ -276,6 +277,8 @@ public:
   void register_resource(string resource, RGWRESTMgr *mgr);
   void register_default_mgr(RGWRESTMgr *mgr);
 
+  virtual int init_auth_pipeline(RGWAuthPipeline* p) { return 0; }
+
   virtual RGWRESTMgr *get_resource_mgr(struct req_state *s, const string& uri, string *out_uri);
   virtual RGWHandler *get_handler(struct req_state *s) { return NULL; }
   virtual void put_handler(RGWHandler *handler) { delete handler; }
@@ -289,7 +292,9 @@ class RGWREST {
 
   static int preprocess(struct req_state *s, RGWClientIO *cio);
 public:
-  RGWREST() {}
+  RGWREST(RGWPluginManager *pm);
+  ~RGWREST();
+
   RGWHandler *get_handler(RGWRados *store, struct req_state *s, RGWClientIO *cio,
 			  RGWRESTMgr **pmgr, int *init_error);
   void put_handler(RGWHandler *handler) {
@@ -305,6 +310,8 @@ public:
   void register_default_mgr(RGWRESTMgr *m) {
     mgr.register_default_mgr(m);
   }
+private:
+  RGWPluginManager *plugin_manager;
 };
 
 extern void set_req_state_err(struct req_state *s, int err_no);

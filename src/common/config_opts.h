@@ -618,6 +618,9 @@ OPTION(rbd_default_features, OPT_INT, 3) // 1 for layering, 3 for layering+strip
 OPTION(nss_db_path, OPT_STR, "") // path to nss db
 
 OPTION(rgw_data, OPT_STR, "/var/lib/ceph/radosgw/$cluster-$id")
+OPTION(rgw_load_plugins, OPT_STR, "keystone")
+OPTION(rgw_s3_auth_pipeline, OPT_STR, "keystone:request_s3token")
+OPTION(rgw_swift_auth_pipeline, OPT_STR, "keystone:check_cache keystone:request_v1token")
 OPTION(rgw_enable_apis, OPT_STR, "s3, swift, swift_auth, admin")
 OPTION(rgw_cache_enabled, OPT_BOOL, true)   // rgw cache enabled
 OPTION(rgw_cache_lru_size, OPT_INT, 10000)   // num of entries in rgw cache

@@ -6,6 +6,7 @@
 #include "rgw_http_errors.h"
 #include "rgw_acl_s3.h"
 #include "rgw_policy_s3.h"
+#include "rgw_auth.h"
 
 #define RGW_AUTH_GRACE_MINS 15
 
@@ -258,11 +259,6 @@ public:
   void end_response();
 };
 
-class RGW_Auth_S3 {
-public:
-  static int authorize(RGWRados *store, struct req_state *s);
-};
-
 class RGWHandler_Auth_S3 : public RGWHandler_ObjStore {
   friend class RGWRESTMgr_S3;
 public:
@@ -277,7 +273,9 @@ public:
 
   virtual int init(RGWRados *store, struct req_state *state, RGWClientIO *cio);
   virtual int authorize() {
-    return RGW_Auth_S3::authorize(store, s);
+    if (s->auth_pipeline==NULL)
+      return -EINVAL;
+    return s->auth_pipeline->authorize(store, s);
   }
 };
 
@@ -293,7 +291,9 @@ public:
 
   virtual int init(RGWRados *store, struct req_state *state, RGWClientIO *cio);
   virtual int authorize() {
-    return RGW_Auth_S3::authorize(store, s);
+    if (s->auth_pipeline==NULL)
+      return -EINVAL;
+    return s->auth_pipeline->authorize(store, s);
   }
 };
 
@@ -358,6 +358,10 @@ class RGWRESTMgr_S3 : public RGWRESTMgr {
 public:
   RGWRESTMgr_S3() {}
   virtual ~RGWRESTMgr_S3() {}
+
+  virtual int init_auth_pipeline(RGWAuthPipeline* p) {
+    return p->init(g_conf->rgw_s3_auth_pipeline);
+  }
 
   virtual RGWRESTMgr *get_resource_mgr(struct req_state *s, const string& uri) {
     return this;

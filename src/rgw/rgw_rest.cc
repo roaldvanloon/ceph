@@ -1135,6 +1135,16 @@ RGWRESTMgr *RGWRESTMgr::get_resource_mgr(struct req_state *s, const string& uri,
   return this;
 }
 
+RGWREST::RGWREST(RGWPluginManager *_pm)
+: plugin_manager(_pm) {
+  plugin_manager->register_plugins(RGW_PLUGIN_TYPE_REST_API, (void *) this);
+}
+
+RGWREST::~RGWREST() {
+  plugin_manager->unregister_plugins(RGW_PLUGIN_TYPE_REST_API, (void *) this);
+}
+
+
 RGWRESTMgr::~RGWRESTMgr()
 {
   map<string, RGWRESTMgr *>::iterator iter;

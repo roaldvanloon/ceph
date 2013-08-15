@@ -130,6 +130,7 @@ class RGWProcess {
   ThreadPool m_tp;
   Throttle req_throttle;
   RGWREST *rest;
+  RGWPluginManager *plugin_manager;
   int sock_fd;
 
   struct RGWWQ : public ThreadPool::WorkQueue<RGWRequest> {
@@ -183,15 +184,20 @@ class RGWProcess {
   } req_wq;
 
   uint64_t max_req_id;
+  RGWAuthManager *auth_manager;
 
 public:
-  RGWProcess(CephContext *cct, RGWRados *rgwstore, OpsLogSocket *_olog, int num_threads, RGWREST *_rest)
+  RGWProcess(CephContext *cct, RGWRados *rgwstore, OpsLogSocket *_olog, int num_threads, RGWREST *_rest, RGWPluginManager *_pm)
     : store(rgwstore), olog(_olog), m_tp(cct, "RGWProcess::m_tp", num_threads),
       req_throttle(cct, "rgw_ops", num_threads * 2),
-      rest(_rest), sock_fd(-1),
-      req_wq(this, g_conf->rgw_op_thread_timeout,
-	     g_conf->rgw_op_thread_suicide_timeout, &m_tp),
-      max_req_id(0) {}
+      rest(_rest), plugin_manager(_pm), sock_fd(-1),
+      req_wq(this, g_conf->rgw_op_thread_timeout, g_conf->rgw_op_thread_suicide_timeout, &m_tp),
+      max_req_id(0) {
+    auth_manager = new RGWAuthManager(plugin_manager);
+  }
+  ~RGWProcess() {
+    delete auth_manager;
+  }
   void run();
   void handle_request(RGWRequest *req);
 
@@ -337,6 +343,7 @@ void RGWProcess::handle_request(RGWRequest *req)
   req->op = op;
 
   req->log(s, "authorizing");
+  s->auth_pipeline = auth_manager->find_pipeline(mgr);
   ret = handler->authorize();
   if (ret < 0) {
     dout(10) << "failed to authorize request" << dendl;
@@ -526,10 +533,16 @@ int main(int argc, const char **argv)
   rgw_bucket_init(store->meta_mgr);
   rgw_log_usage_init(g_ceph_context, store);
 
-  RGWREST rest;
+  /* load plugins */
+  RGWPluginManager *pm = new RGWPluginManager(g_ceph_context);
+  if (pm->load_plugins() < 0)
+    return 1;
+
+  /* init rest */
+  RGWREST *rest = new RGWREST(pm);
 
   list<string> apis;
-  bool do_swift = false;
+//  bool do_swift = false;
 
   get_str_list(g_conf->rgw_enable_apis, apis);
 
@@ -539,16 +552,16 @@ int main(int argc, const char **argv)
   }
 
   if (apis_map.count("s3") > 0)
-    rest.register_default_mgr(set_logging(new RGWRESTMgr_S3));
+    rest->register_default_mgr(set_logging(new RGWRESTMgr_S3));
 
   if (apis_map.count("swift") > 0) {
-    do_swift = true;
-    swift_init(g_ceph_context);
-    rest.register_resource(g_conf->rgw_swift_url_prefix, set_logging(new RGWRESTMgr_SWIFT));
+    //do_swift = true;
+    //swift_init(g_ceph_context);
+    rest->register_resource(g_conf->rgw_swift_url_prefix, set_logging(new RGWRESTMgr_SWIFT));
   }
 
   if (apis_map.count("swift_auth") > 0)
-    rest.register_resource(g_conf->rgw_swift_auth_entry, set_logging(new RGWRESTMgr_SWIFT_Auth));
+    rest->register_resource(g_conf->rgw_swift_auth_entry, set_logging(new RGWRESTMgr_SWIFT_Auth));
 
   if (apis_map.count("admin") > 0) {
     RGWRESTMgr_Admin *admin_resource = new RGWRESTMgr_Admin;
@@ -562,7 +575,7 @@ int main(int argc, const char **argv)
     admin_resource->register_resource("opstate", new RGWRESTMgr_Opstate);
     admin_resource->register_resource("replica_log", new RGWRESTMgr_ReplicaLog);
     admin_resource->register_resource("config", new RGWRESTMgr_Config);
-    rest.register_resource(g_conf->rgw_admin_entry, admin_resource);
+    rest->register_resource(g_conf->rgw_admin_entry, admin_resource);
   }
 
   OpsLogSocket *olog = NULL;
@@ -572,7 +585,7 @@ int main(int argc, const char **argv)
     olog->init(g_conf->rgw_ops_log_socket_path);
   }
 
-  pprocess = new RGWProcess(g_ceph_context, store, olog, g_conf->rgw_thread_pool_size, &rest);
+  pprocess = new RGWProcess(g_ceph_context, store, olog, g_conf->rgw_thread_pool_size, rest, pm);
 
   init_async_signal_handler();
   register_async_signal_handler(SIGHUP, sighup_handler);
@@ -593,9 +606,11 @@ int main(int argc, const char **argv)
 
   delete pprocess;
 
-  if (do_swift) {
-    swift_finalize();
-  }
+//  if (do_swift) {
+//    swift_finalize();
+//  }
+
+  delete rest;
 
   rgw_log_usage_finalize();
 
