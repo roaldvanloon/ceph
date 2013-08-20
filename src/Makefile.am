@@ -403,7 +403,8 @@ librgw_a_SOURCES =  \
 	rgw/rgw_cors_s3.cc \
         rgw/rgw_auth_s3.cc \
 	rgw/rgw_metadata.cc \
-	rgw/rgw_replica_log.cc
+	rgw/rgw_replica_log.cc \
+	rgw/rgw_plugin.cc
 librgw_a_CFLAGS = ${CRYPTO_CFLAGS} ${AM_CFLAGS}
 librgw_a_CXXFLAGS = -Woverloaded-virtual ${AM_CXXFLAGS}
 noinst_LIBRARIES += librgw.a
@@ -435,6 +436,10 @@ radosgw_SOURCES = \
 radosgw_LDADD = $(my_radosgw_ldadd) -lfcgi -lresolv
 radosgw_CXXFLAGS = ${AM_CXXFLAGS}
 bin_PROGRAMS += radosgw
+
+# rgw plugins: example
+radosgw_SOURCES += \
+	rgw/plugins/example/plugin.cc
 
 radosgw_admin_SOURCES = rgw/rgw_admin.cc
 radosgw_admin_CXXFLAGS = ${AM_CXXFLAGS}
@@ -2279,6 +2284,7 @@ noinst_HEADERS = \
 	rgw/rgw_usage.h\
 	rgw/rgw_user.h\
 	rgw/rgw_bucket.h\
+	rgw/rgw_plugin.h\
         sample.ceph.conf\
 	tools/common.h\
 	test/osd/RadosModel.h\
