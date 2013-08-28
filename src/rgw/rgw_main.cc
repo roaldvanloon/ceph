@@ -130,6 +130,7 @@ class RGWProcess {
   ThreadPool m_tp;
   Throttle req_throttle;
   RGWREST *rest;
+  RGWAuth *auth;
   int sock_fd;
 
   struct RGWWQ : public ThreadPool::WorkQueue<RGWRequest> {
@@ -185,10 +186,10 @@ class RGWProcess {
   uint64_t max_req_id;
 
 public:
-  RGWProcess(CephContext *cct, RGWRados *rgwstore, OpsLogSocket *_olog, int num_threads, RGWREST *_rest)
+  RGWProcess(CephContext *cct, RGWRados *rgwstore, OpsLogSocket *_olog, int num_threads, RGWREST *_rest, RGWAuth *_auth)
     : store(rgwstore), olog(_olog), m_tp(cct, "RGWProcess::m_tp", num_threads),
       req_throttle(cct, "rgw_ops", num_threads * 2),
-      rest(_rest), sock_fd(-1),
+      rest(_rest), sock_fd(-1), auth(_auth),
       req_wq(this, g_conf->rgw_op_thread_timeout,
 	     g_conf->rgw_op_thread_suicide_timeout, &m_tp),
       max_req_id(0) {}
@@ -309,6 +310,7 @@ void RGWProcess::handle_request(RGWRequest *req)
   rgw_env.init(g_ceph_context, fcgx->envp);
 
   struct req_state *s = req->init_state(g_ceph_context, &rgw_env);
+  s->auth_handler = auth;
   s->obj_ctx = store->create_context(s);
   store->set_intent_cb(s->obj_ctx, call_log_intent);
 
@@ -527,13 +529,13 @@ int main(int argc, const char **argv)
   rgw_log_usage_init(g_ceph_context, store);
 
   RGWREST rest;
+  RGWAuth auth(g_ceph_context);
 
+  /* init apis */
   list<string> apis;
-  bool do_swift = false;
-
-  get_str_list(g_conf->rgw_enable_apis, apis);
-
   map<string, bool> apis_map;
+  bool do_swift = false;
+  get_str_list(g_conf->rgw_enable_apis, apis);
   for (list<string>::iterator li = apis.begin(); li != apis.end(); ++li) {
     apis_map[*li] = true;
   }
@@ -572,7 +574,7 @@ int main(int argc, const char **argv)
     olog->init(g_conf->rgw_ops_log_socket_path);
   }
 
-  pprocess = new RGWProcess(g_ceph_context, store, olog, g_conf->rgw_thread_pool_size, &rest);
+  pprocess = new RGWProcess(g_ceph_context, store, olog, g_conf->rgw_thread_pool_size, &rest, &auth);
 
   init_async_signal_handler();
   register_async_signal_handler(SIGHUP, sighup_handler);

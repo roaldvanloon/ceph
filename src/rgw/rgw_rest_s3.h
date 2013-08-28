@@ -6,6 +6,7 @@
 #include "rgw_http_errors.h"
 #include "rgw_acl_s3.h"
 #include "rgw_policy_s3.h"
+#include "rgw_keystone.h"
 
 #define RGW_AUTH_GRACE_MINS 15
 
@@ -256,6 +257,46 @@ public:
   void begin_response();
   void send_partial_response(pair<string,int>& result);
   void end_response();
+};
+
+class RGW_Auth_S3_Keystone_ValidateToken : public RGWHTTPClient {
+private:
+  bufferlist rx_buffer;
+  bufferlist tx_buffer;
+  list<string> roles_list;
+
+public:
+  KeystoneToken token;
+
+public:
+  RGW_Auth_S3_Keystone_ValidateToken(CephContext *_cct)
+      : RGWHTTPClient(_cct) {
+    get_str_list(cct->_conf->rgw_keystone_accepted_roles, roles_list);
+  }
+
+  int receive_data(void *ptr, size_t len) {
+    rx_buffer.append((char *)ptr, len);
+    return 0;
+  }
+
+  int send_data(void *ptr, size_t len) {
+    if (tx_buffer.length() == 0)
+      return 0;
+
+    if (tx_buffer.length() <= len) {
+      memcpy(ptr, tx_buffer.c_str(), tx_buffer.length());
+      return tx_buffer.length();
+    }
+
+    memcpy(ptr, tx_buffer.c_str(), len);
+    bufferlist new_tx_buffer;
+    tx_buffer.copy(len, tx_buffer.length()-len, new_tx_buffer);
+    tx_buffer = new_tx_buffer;
+    return len;
+  }
+
+  int validate_s3token(string auth_id, string auth_token, string auth_sign);
+
 };
 
 class RGW_Auth_S3 {

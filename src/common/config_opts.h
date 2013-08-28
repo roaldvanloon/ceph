@@ -617,8 +617,10 @@ OPTION(rbd_default_features, OPT_INT, 3) // 1 for layering, 3 for layering+strip
 
 OPTION(nss_db_path, OPT_STR, "") // path to nss db
 
+
 OPTION(rgw_data, OPT_STR, "/var/lib/ceph/radosgw/$cluster-$id")
 OPTION(rgw_enable_apis, OPT_STR, "s3, swift, swift_auth, admin")
+OPTION(rgw_auth_pipeline, OPT_STR, "keystone rados")
 OPTION(rgw_cache_enabled, OPT_BOOL, true)   // rgw cache enabled
 OPTION(rgw_cache_lru_size, OPT_INT, 10000)   // num of entries in rgw cache
 OPTION(rgw_socket_path, OPT_STR, "")   // path to unix domain socket, if not specified, rgw will not run as external fcgi
@@ -636,6 +638,8 @@ OPTION(rgw_keystone_admin_token, OPT_STR, "")  // keystone admin token (shared s
 OPTION(rgw_keystone_accepted_roles, OPT_STR, "Member, admin")  // roles required to serve requests
 OPTION(rgw_keystone_token_cache_size, OPT_INT, 10000)  // max number of entries in keystone token cache
 OPTION(rgw_keystone_revocation_interval, OPT_INT, 15 * 60)  // seconds between tokens revocation check
+OPTION(rgw_s3_use_rados, OPT_BOOL, true)  // should we try to use the internal credentials for s3?
+OPTION(rgw_s3_use_keystone, OPT_BOOL, false)  // should we try to use keystone for s3?
 OPTION(rgw_admin_entry, OPT_STR, "admin")  // entry point for which a url is considered an admin request
 OPTION(rgw_enforce_swift_acls, OPT_BOOL, true)
 OPTION(rgw_swift_token_expiration, OPT_INT, 24 * 3600) // time in seconds for swift token expiration
