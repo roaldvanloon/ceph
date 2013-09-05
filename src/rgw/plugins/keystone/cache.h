@@ -46,7 +46,7 @@ public:
   ~TokenCache();
 
   bool find(KeystoneToken *token);
-  bool find(const string& cache_key, KeystoneToken *token)
+  bool find(const string& cache_key, KeystoneToken *token);
 
   void add(KeystoneToken& token);
   void invalidate(const string& token_id);
