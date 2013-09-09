@@ -2,7 +2,6 @@
 Makefile
 
 # local directory specific entries
-/.git_version
 /.libs
 /acconfig.h*
 /ceph

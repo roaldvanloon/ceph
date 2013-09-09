@@ -1,4 +1,4 @@
-AUTOMAKE_OPTIONS = gnu
+#AUTOMAKE_OPTIONS = gnu
 
 dist_man_MANS = \
 	ceph-osd.8 \
@@ -28,3 +28,4 @@ dist_man_MANS = \
 	ceph-rbdnamer.8 \
 	ceph-post-file.8 \
 	rbd-fuse.8
+

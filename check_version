@@ -2,8 +2,8 @@
 
 dname=`dirname $0`
 
-if [ ! -d $dname/../.git ]; then
-    echo "not updating .git_version (no $dname/../.git)"
+if [ ! -d $dname/.git ]; then
+    echo "not updating .git_version (no $dname/.git)"
     exit 0
 fi
 

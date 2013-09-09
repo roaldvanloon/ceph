@@ -52,6 +52,8 @@ stamp-h1
 vgcore.*
 
 # specific local dir files
+/.git_version
+/ceph_ver.h
 /build-doc
 /config.*
 /Makefile

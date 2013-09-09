@@ -21,7 +21,7 @@ if test -d ".git" ; then
 fi
 AC_MSG_NOTICE([RPM_RELEASE='$RPM_RELEASE'])
 
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIR([contrib/m4])
 
 AC_CONFIG_SUBDIRS([src/gtest])
 
@@ -599,6 +599,12 @@ AC_CHECK_FUNC([fallocate],
 
 AM_CONDITIONAL(WITH_BUILD_TESTS, test "$WITH_BUILD_TESTS" = "1")
 
+topdir="`dirname $0`"
+if test "`echo \"$topdir\" | cut -c 1`" != "/"; then
+	topdir="`pwd`/$topdir"
+fi
+CPPFLAGS="$CPPFLAGS -I${topdir}"
+
 AM_PATH_PYTHON([2.4],
 	[], [AC_MSG_FAILURE([Failed to find Python 2.4 or newer])])
 
@@ -610,5 +616,5 @@ AC_CONFIG_FILES([Makefile
 	src/ocf/rbd
 	src/java/Makefile
 	man/Makefile
-	ceph.spec])
+	contrib/dist/rpm/ceph.spec])
 AC_OUTPUT

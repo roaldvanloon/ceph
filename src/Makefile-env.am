@@ -20,9 +20,6 @@ radoslib_LTLIBRARIES =
 # like bin_PROGRAMS, but these targets are only built for debug builds
 bin_DEBUGPROGRAMS =
 
-# like sbin_SCRIPTS but can be used to install to e.g. /usr/sbin
-ceph_sbindir = $(exec_prefix)$(sbindir)
-
 # C/C++ tests to build will be appended to this
 check_PROGRAMS =
 

@@ -130,70 +130,17 @@ lib_LTLIBRARIES += libcephfs_jni.la
 endif
 
 
-# shell scripts
-
-editpaths = sed \
-	-e 's|@bindir[@]|$(bindir)|g' \
-	-e 's|@sbindir[@]|$(sbindir)|g' \
-	-e 's|@libdir[@]|$(libdir)|g' \
-	-e 's|@sysconfdir[@]|$(sysconfdir)|g' \
-	-e 's|@datadir[@]|$(pkgdatadir)|g' \
-	-e 's|@prefix[@]|$(prefix)|g' \
-	-e 's|@@GCOV_PREFIX_STRIP[@][@]|$(GCOV_PREFIX_STRIP)|g'
-shell_scripts = ceph-debugpack ceph-post-file
-$(shell_scripts): Makefile
-$(shell_scripts): %: %.in
-	rm -f $@ $@.tmp
-	$(editpaths) '$(srcdir)/$@.in' >$@.tmp
-	chmod +x $@.tmp
-	chmod a-w $@.tmp
-	mv $@.tmp $@
-
-EXTRA_DIST += $(srcdir)/$(shell_scripts:%=%.in)
-CLEANFILES += $(shell_scripts)
-
-
 # extra bits
 
 EXTRA_DIST += \
-	$(srcdir)/verify-mds-journal.sh \
 	$(srcdir)/vstart.sh \
 	$(srcdir)/stop.sh \
-	ceph-run \
-	$(srcdir)/ceph_common.sh \
-	$(srcdir)/init-radosgw \
-	$(srcdir)/init-radosgw.sysv \
-	$(srcdir)/init-rbdmap \
-	$(srcdir)/ceph-clsinfo \
-	$(srcdir)/make_version \
-	$(srcdir)/check_version \
-	$(srcdir)/.git_version \
-	$(srcdir)/ceph-rbdnamer \
 	$(srcdir)/test/encoding/readable.sh \
 	$(srcdir)/test/encoding/check-generated.sh \
-	$(srcdir)/upstart/ceph-all.conf \
-	$(srcdir)/upstart/ceph-mon.conf \
-	$(srcdir)/upstart/ceph-mon-all.conf \
-	$(srcdir)/upstart/ceph-mon-all-starter.conf \
-	$(srcdir)/upstart/ceph-create-keys.conf \
-	$(srcdir)/upstart/ceph-osd.conf \
-	$(srcdir)/upstart/ceph-osd-all.conf \
-	$(srcdir)/upstart/ceph-osd-all-starter.conf \
-	$(srcdir)/upstart/ceph-mds.conf \
-	$(srcdir)/upstart/ceph-mds-all.conf \
-	$(srcdir)/upstart/ceph-mds-all-starter.conf \
-	$(srcdir)/upstart/radosgw.conf \
-	$(srcdir)/upstart/radosgw-all.conf \
-	$(srcdir)/upstart/radosgw-all-starter.conf \
-	ceph.in \
-	ceph-disk \
-	ceph-disk-prepare \
-	ceph-disk-activate \
-	ceph-disk-udev \
-	ceph-create-keys \
-	ceph-rest-api \
-	mount.fuse.ceph \
-	rbdmap \
+	src/test/run-cli-tests \
+	src/test/run-cli-tests-maybe-unset-ccache \
+	src/test/cli \
+	src/test/downloads \
 	unittest_bufferlist.sh \
 	yasm-wrapper
 
@@ -214,47 +161,7 @@ EXTRA_DIST += \
 	libs3/libs3.spec \
 	libs3/mswin \
 	libs3/src \
-	libs3/test \
-	unittest_bufferlist.sh
-
-# work around old versions of automake that don't define $docdir
-# NOTE: this won't work on suse, where docdir is /usr/share/doc/packages/$package.
-docdir ?= ${datadir}/doc/ceph
-doc_DATA = $(srcdir)/sample.ceph.conf sample.fetch_config
-
-
-# various scripts
-
-shell_commondir = $(libdir)/ceph
-shell_common_SCRIPTS = ceph_common.sh
-
-bash_completiondir = $(sysconfdir)/bash_completion.d
-bash_completion_DATA = $(srcdir)/bash_completion/ceph \
-               $(srcdir)/bash_completion/rados \
-               $(srcdir)/bash_completion/rbd \
-               $(srcdir)/bash_completion/radosgw-admin
-
-ceph_sbin_SCRIPTS = \
-	ceph-disk \
-	ceph-disk-prepare \
-	ceph-disk-activate \
-	ceph-disk-udev \
-	ceph-create-keys
-
-bin_SCRIPTS += \
-	ceph \
-	ceph-run \
-	ceph-rest-api \
-	ceph-clsinfo \
-	ceph-debugpack \
-	ceph-rbdnamer \
-	ceph-post-file
-
-BUILT_SOURCES += init-ceph
-sbin_SCRIPTS += mkcephfs
-
-shell_scripts += init-ceph mkcephfs
-
+	libs3/test
 
 
 
@@ -275,46 +182,15 @@ check-local:
 core-daemons: ceph-mon ceph-osd ceph-mds radosgw
 admin-tools: monmaptool osdmaptool crushtool ceph-authtool
 base: core-daemons admin-tools \
-	cephfs ceph-syn ceph-conf \
-	rados librados-config \
-	init-ceph mkcephfs ceph_mon_store_converter ceph-post-file
+	cephfs ceph-syn ceph-conf ceph_mon_store_converter \
+	rados librados-config ceph-post-file
 
 
-# version stuff
-
-FORCE:
-.git_version: FORCE
-	$(srcdir)/check_version $(srcdir)/.git_version
-ceph_ver.h: .git_version
-	$(srcdir)/make_version $(srcdir)/.git_version ./ceph_ver.h
-
-ceph_ver.c: ./ceph_ver.h
-common/version.cc: ./ceph_ver.h
-test/encoding/ceph_dencoder.cc: ./ceph_ver.h
-
-sample.fetch_config: fetch_config
-	cp -f $(srcdir)/fetch_config ./sample.fetch_config
-
-dist-hook:
-	$(srcdir)/check_version $(srcdir)/.git_version
-
-CLEANFILES += ceph_ver.h sample.fetch_config
+#ceph_ver.c: $(srcdir)/ceph_ver.h
+#common/version.cc: $(srcdir)/ceph_ver.h
+#test/encoding/ceph_dencoder.cc: $(srcdir)/src/ceph_ver.h
 
 
-# assemble Python script with global version variables
-# NB: depends on format of ceph_ver.h
-
-ceph: ceph.in ./ceph_ver.h Makefile
-	rm -f $@ $@.tmp
-	echo "#!/usr/bin/python" >$@.tmp
-	grep "#define CEPH_GIT_NICE_VER" ./ceph_ver.h | \
-		sed -e 's/#define \(.*VER\) /\1=/' >>$@.tmp
-	grep "#define CEPH_GIT_VER" ./ceph_ver.h | \
-	  sed -e 's/#define \(.*VER\) /\1=/' -e 's/=\(.*\)$$/="\1"/' >>$@.tmp
-	cat $@.in >>$@.tmp
-	chmod a+x $@.tmp
-	chmod a-w $@.tmp
-	mv $@.tmp $@
 
 # cleaning
 
@@ -322,37 +198,17 @@ clean-local:
 	-rm *.so *.gcno *.gcda
 
 
-# pybind
-
-python_PYTHON = pybind/rados.py \
-		pybind/rbd.py \
-		pybind/cephfs.py \
-		pybind/ceph_argparse.py \
-		pybind/ceph_rest_api.py
-
-
 # everything else we want to include in a 'make dist'
 
 noinst_HEADERS += \
 	cls_acl.cc\
 	cls_crypto.cc\
-	fetch_config\
-	logrotate.conf\
-	sample.ceph.conf\
-	bash_completion/ceph \
-	bash_completion/rados \
-	bash_completion/rbd \
-	bash_completion/radosgw-admin \
 	mount/canonicalize.c \
 	mount/mtab.c \
 	objclass/objclass.h
 
 
 # coverage
-
-shell_scripts += ceph-coverage
-bin_SCRIPTS += ceph-coverage
-
 
 if ENABLE_COVERAGE
 COV_DIR = $(DESTDIR)$(libdir)/ceph/coverage

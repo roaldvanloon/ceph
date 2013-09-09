@@ -1,0 +1,12 @@
+ceph.conf
+sample.fetch_config
+dist/rpm/ceph.spec
+
+ceph-debugpack
+ceph-post-file
+mkcephfs
+init-ceph
+ceph-coverage
+ceph
+
+
