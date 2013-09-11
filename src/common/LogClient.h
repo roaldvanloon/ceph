@@ -11,15 +11,14 @@
  * Foundation.  See file COPYING.
  * 
  */
-
 #ifndef CEPH_LOGCLIENT_H
 #define CEPH_LOGCLIENT_H
 
-#include "common/LogEntry.h"
-#include "common/Mutex.h"
-
 #include <iosfwd>
 #include <sstream>
+
+#include "common/LogEntry.h"
+#include "common/Mutex.h"
 
 class LogClient;
 class MLog;

@@ -5,7 +5,6 @@
 
 class CephContext;
 
-
 #define CEPH_PICK_ADDRESS_PUBLIC     0x01
 #define CEPH_PICK_ADDRESS_CLUSTER    0x02
 

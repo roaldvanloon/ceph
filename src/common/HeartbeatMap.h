@@ -11,19 +11,16 @@
  * Foundation.  See file COPYING.
  * 
  */
-
 #ifndef CEPH_HEARTBEATMAP_H
 #define CEPH_HEARTBEATMAP_H
 
 #include <pthread.h>
-
 #include <string>
 #include <list>
 #include <time.h>
 
 #include "include/atomic.h"
-
-#include "RWLock.h"
+#include "common/RWLock.h"
 
 class CephContext;
 

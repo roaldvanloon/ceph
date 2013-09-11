@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_ARGPARSE_H
 #define CEPH_ARGPARSE_H
 
@@ -23,13 +22,14 @@
  * stuff to live.
  */
 
+#include "msg/msg_types.h"
+
 #include <deque>
 #include <stdint.h>
 #include <string>
 #include <vector>
 
 #include "common/entity_name.h"
-#include "msg/msg_types.h"
 
 /////////////////////// Types ///////////////////////
 class CephInitParameters

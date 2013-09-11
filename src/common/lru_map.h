@@ -3,8 +3,8 @@
 
 #include <list>
 #include <map>
-#include "common/Mutex.h"
 
+#include "common/Mutex.h"
 
 template <class K, class V>
 class lru_map {

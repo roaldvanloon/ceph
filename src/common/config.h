@@ -11,11 +11,10 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_CONFIG_H
 #define CEPH_CONFIG_H
 
-extern struct ceph_file_layout g_default_file_layout;
+#include "msg/msg_types.h"
 
 #include <iosfwd>
 #include <vector>
@@ -25,9 +24,8 @@ extern struct ceph_file_layout g_default_file_layout;
 #include "common/ConfUtils.h"
 #include "common/entity_name.h"
 #include "common/Mutex.h"
-#include "log/SubsystemMap.h"
 #include "common/config_obs.h"
-#include "msg/msg_types.h"
+#include "log/SubsystemMap.h"
 
 #define OSD_REP_PRIMARY 0
 #define OSD_REP_SPLAY   1
@@ -36,6 +34,7 @@ extern struct ceph_file_layout g_default_file_layout;
 struct config_option;
 class CephContext;
 
+extern struct ceph_file_layout g_default_file_layout;
 extern const char *CEPH_CONF_FILE_DEFAULT;
 
 #define LOG_TO_STDERR_NONE 0

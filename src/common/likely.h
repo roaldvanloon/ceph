@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_LIKELY_DOT_H
 #define CEPH_LIKELY_DOT_H
 

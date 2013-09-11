@@ -3,13 +3,9 @@
  * user space.
  *
  */
+#include "include/types.h"
 
 #include <errno.h>
-
-/*
- * Some non-inline ceph helpers
- */
-#include "include/types.h"
 
 /*
  * return true if @layout appears to be valid

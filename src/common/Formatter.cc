@@ -11,21 +11,16 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #define LARGE_SIZE 1024
 
-#include "include/int_types.h"
+#include "common/Formatter.h"
 
-#include "assert.h"
-#include "Formatter.h"
-#include "common/escape.h"
-
-#include <iostream>
-#include <sstream>
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+
+#include "common/assert.h"
+#include "common/escape.h"
 
 // -----------------------
 namespace ceph {

@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #include "common/pick_address.h"
 
 #include <netdb.h>

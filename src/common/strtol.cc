@@ -11,12 +11,12 @@
  * Foundation.  See file COPYING.
  *
  */
+#include "common/strtol.h"
 
 #include <errno.h>
 #include <limits.h>
 #include <sstream>
 #include <stdlib.h>
-#include <string>
 
 using std::ostringstream;
 

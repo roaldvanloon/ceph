@@ -1,4 +1,3 @@
-
 #include "common/PrebufferedStreambuf.h"
 
 PrebufferedStreambuf::PrebufferedStreambuf(char *buf, size_t len)

@@ -11,20 +11,19 @@
  * Foundation.  See file COPYING.
  *
  */
-
-#include "common/BackTrace.h"
-#include "common/perf_counters.h"
-#include "common/config.h"
-#include "common/debug.h"
-#include "global/pidfile.h"
 #include "global/signal_handler.h"
 
 #include <poll.h>
-#include <signal.h>
 #include <sstream>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#include "common/BackTrace.h"
+#include "common/perf_counters.h"
+#include "common/config.h"
+#include "global/global_debug.h"
+#include "global/pidfile.h"
 
 void install_sighandler(int signum, signal_handler_t handler, int flags)
 {

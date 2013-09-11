@@ -12,7 +12,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_COMMON_HEX_H
 #define CEPH_COMMON_HEX_H
 

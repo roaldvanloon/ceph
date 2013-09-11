@@ -1,13 +1,13 @@
 // -*- mode:C++; tab-width:8; c-basic-offset:2; indent-tabs-mode:t -*-
 // vim: ts=8 sw=2 smarttab
-
 #ifndef CEPH_THROTTLE_H
 #define CEPH_THROTTLE_H
 
-#include "Mutex.h"
-#include "Cond.h"
 #include <list>
+
 #include "include/atomic.h"
+#include "common/Mutex.h"
+#include "common/Cond.h"
 
 class CephContext;
 class PerfCounters;

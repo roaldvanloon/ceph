@@ -11,8 +11,6 @@
  * Foundation.  See file COPYING.
  * 
  */
-
-
 #ifndef CEPH_Sem_Posix__H
 #define CEPH_Sem_Posix__H
 

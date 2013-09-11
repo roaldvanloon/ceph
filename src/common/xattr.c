@@ -8,6 +8,7 @@
  * License version 2.1, as published by the Free Software
  * Foundation.  See file COPYING.
  */
+#include "common/xattr.h"
 
 #if defined(__FreeBSD__)
 #include <errno.h>
@@ -25,7 +26,6 @@
 #error "Your system is not supported!"
 #endif
 
-#include "common/xattr.h"
 
 /*
  * Sets extended attribute on a file.

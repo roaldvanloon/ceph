@@ -11,22 +11,20 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #include "common/Thread.h"
-#include "common/code_environment.h"
-#include "common/debug.h"
-#include "common/signal.h"
 
 #include <dirent.h>
 #include <errno.h>
 #include <iostream>
-#include <pthread.h>
 #include <signal.h>
 #include <sstream>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 
+#include "common/code_environment.h"
+#include "common/debug.h"
+#include "common/signal.h"
 
 Thread::Thread()
   : thread_id(0)

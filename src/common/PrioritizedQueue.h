@@ -11,17 +11,16 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef PRIORITY_QUEUE_H
 #define PRIORITY_QUEUE_H
-
-#include "common/Mutex.h"
-#include "common/Formatter.h"
 
 #include <map>
 #include <utility>
 #include <list>
 #include <algorithm>
+
+#include "common/Mutex.h"
+#include "common/Formatter.h"
 
 /**
  * Manages queue for normal and strict priority items

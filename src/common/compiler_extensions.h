@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_COMPILER_EXTENSIONS_H
 #define CEPH_COMPILER_EXTENSIONS_H
 

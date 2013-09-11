@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_SYNC_FILESYSTEM_H
 #define CEPH_SYNC_FILESYSTEM_H
 
@@ -21,7 +20,7 @@
 #ifndef __CYGWIN__
 # ifndef DARWIN
 #  include <sys/ioctl.h>
-#  include "../os/btrfs_ioctl.h"
+#  include "os/btrfs_ioctl.h"
 # endif
 #endif
 

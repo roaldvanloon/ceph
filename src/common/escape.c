@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #include "common/escape.h"
 
 #include <stdio.h>

@@ -11,16 +11,15 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_COMMON_INIT_H
 #define CEPH_COMMON_INIT_H
+
+#include "common/code_environment.h"
 
 #include <deque>
 #include <stdint.h>
 #include <string>
 #include <vector>
-
-#include "common/code_environment.h"
 
 class CephContext;
 class CephInitParameters;

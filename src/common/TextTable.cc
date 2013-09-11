@@ -11,7 +11,7 @@
  * Foundation.  See file COPYING.
  *
  */
-#include "TextTable.h"
+#include "common/TextTable.h"
 
 using namespace std;
 

@@ -11,26 +11,26 @@
  * Foundation.  See file COPYING.
  *
  */
+#include "global/global_init.h"
 
+#include <errno.h>
+#include <deque>
+
+#include "include/compat.h"
+#include "include/color.h"
 #include "common/Thread.h"
 #include "common/ceph_argparse.h"
 #include "common/code_environment.h"
 #include "common/common_init.h"
 #include "common/config.h"
-#include "common/debug.h"
 #include "common/errno.h"
 #include "common/safe_io.h"
 #include "common/signal.h"
 #include "common/version.h"
 #include "global/global_context.h"
-#include "global/global_init.h"
 #include "global/pidfile.h"
 #include "global/signal_handler.h"
-#include "include/compat.h"
-#include "include/color.h"
-
-#include <errno.h>
-#include <deque>
+#include "global/global_debug.h"
 
 #define dout_subsys ceph_subsys_
 

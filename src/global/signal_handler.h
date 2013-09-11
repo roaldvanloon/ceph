@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_GLOBAL_SIGNAL_HANDLER_H
 #define CEPH_GLOBAL_SIGNAL_HANDLER_H
 

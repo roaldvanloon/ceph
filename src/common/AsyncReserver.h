@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef ASYNC_RESERVER_H
 #define ASYNC_RESERVER_H
 

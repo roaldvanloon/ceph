@@ -11,12 +11,12 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_SAFE_IO
 #define CEPH_SAFE_IO
 
-#include "common/compiler_extensions.h"
 #include <sys/types.h>
+
+#include "common/compiler_extensions.h"
 
 #ifdef __cplusplus
 extern "C" {

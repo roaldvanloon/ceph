@@ -10,16 +10,18 @@
  * License version 2.1, as published by the Free Software
  * Foundation.  See file COPYING.
  */
-
 #ifndef TRACKEDREQUEST_H_
 #define TRACKEDREQUEST_H_
+
+#include "include/int_types.h"
+
 #include <sstream>
-#include <stdint.h>
-#include <include/utime.h>
-#include "common/Mutex.h"
-#include "include/xlist.h"
-#include "msg/Message.h"
 #include <tr1/memory>
+
+#include "include/utime.h"
+#include "include/xlist.h"
+#include "common/Mutex.h"
+#include "msg/Message.h"
 
 class TrackedOp {
 public:

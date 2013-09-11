@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef MAPCACHER_H
 #define MAPCACHER_H
 

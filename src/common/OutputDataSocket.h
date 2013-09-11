@@ -11,18 +11,17 @@
  * Foundation.  See file COPYING.
  * 
  */
-
 #ifndef CEPH_COMMON_OUTPUTDATASOCKET_H
 #define CEPH_COMMON_OUTPUTDATASOCKET_H
-
-#include "common/Thread.h"
-#include "common/Mutex.h"
-#include "common/Cond.h"
 
 #include <string>
 #include <map>
 #include <list>
+
 #include "include/buffer.h"
+#include "common/Thread.h"
+#include "common/Mutex.h"
+#include "common/Cond.h"
 
 class CephContext;
 

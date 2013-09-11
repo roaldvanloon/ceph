@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_COMMON_UTF8_H
 #define CEPH_COMMON_UTF8_H
 

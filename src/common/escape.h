@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_RGW_ESCAPE_H
 #define CEPH_RGW_ESCAPE_H
 

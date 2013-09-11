@@ -11,10 +11,10 @@
  * Foundation.  See file COPYING.
  * 
  */
+#include "include/util.h"
 
 #include <errno.h>
 
-#include "include/util.h"
 #include "common/errno.h"
 #include "common/strtol.h"
 

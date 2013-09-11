@@ -11,8 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
-#include "common/ceph_context.h"
 #include "global/global_context.h"
 
 /*

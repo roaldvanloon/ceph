@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_COMMON_MIME_H
 #define CEPH_COMMON_MIME_H
 

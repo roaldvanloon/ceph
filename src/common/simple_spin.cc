@@ -11,11 +11,9 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #include "common/simple_spin.h"
 
 #include <stdio.h>
-#include <stdint.h>
 #include <pthread.h>
 
 static uint32_t bar = 13;

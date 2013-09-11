@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #include "include/str_list.h"
 
 using std::string;

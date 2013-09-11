@@ -1,7 +1,6 @@
 #include "common/errno.h"
 
 #include <sstream>
-#include <string>
 #include <string.h>
 
 std::string cpp_strerror(int err)

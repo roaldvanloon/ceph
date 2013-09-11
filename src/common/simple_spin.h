@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_SIMPLE_SPIN_H
 #define CEPH_SIMPLE_SPIN_H
 
@@ -27,7 +26,7 @@
  * correctly initialized.
  */
 
-#include <stdint.h>
+#include "include/int_types.h"
 
 typedef uint32_t simple_spinlock_t;
 

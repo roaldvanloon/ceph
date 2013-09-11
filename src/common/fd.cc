@@ -11,16 +11,15 @@
  * Foundation.  See file COPYING.
  *
  */
-
-#include "fd.h"
+#include "common/fd.h"
 
 #include <sys/types.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <errno.h>
 
-#include "debug.h"
-#include "errno.h"
+#include "common/debug.h"
+#include "common/errno.h"
 
 void dump_open_fds(CephContext *cct)
 {

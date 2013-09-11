@@ -11,12 +11,13 @@
  * Foundation.  See file COPYING.
  *
  */
+#include "common/cmdparse.h"
 
 #include <cxxabi.h>
-#include "common/cmdparse.h"
+
 #include "include/str_list.h"
-#include "json_spirit/json_spirit.h"
 #include "common/debug.h"
+#include "json_spirit/json_spirit.h"
 
 using namespace std;
 

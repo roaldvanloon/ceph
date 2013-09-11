@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_COMMON_SIGNAL_H
 #define CEPH_COMMON_SIGNAL_H
 

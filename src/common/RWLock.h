@@ -11,14 +11,12 @@
  * Foundation.  See file COPYING.
  * 
  */
-
-
-
 #ifndef CEPH_RWLock_Posix__H
 #define CEPH_RWLock_Posix__H
 
 #include <pthread.h>
-#include "lockdep.h"
+
+#include "common/lockdep.h"
 
 class RWLock
 {

@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #include "common/environment.h"
 
 #include <stdlib.h>

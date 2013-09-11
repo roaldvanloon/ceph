@@ -1,8 +1,7 @@
 // -*- mode:C++; tab-width:8; c-basic-offset:2; indent-tabs-mode:t -*-
 // vim: ts=8 sw=2 smarttab
+#include "common/hobject.h"
 
-#include "include/types.h"
-#include "hobject.h"
 #include "common/Formatter.h"
 
 static void append_escaped(const string &in, string *out)

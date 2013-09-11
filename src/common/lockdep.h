@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_LOCKDEP_H
 #define CEPH_LOCKDEP_H
 

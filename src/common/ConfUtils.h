@@ -11,16 +11,15 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_CONFUTILS_H
 #define CEPH_CONFUTILS_H
+
+#include "include/buffer.h"
 
 #include <deque>
 #include <map>
 #include <set>
 #include <string>
-
-#include "include/buffer.h"
 
 /*
  * Ceph configuration file support.

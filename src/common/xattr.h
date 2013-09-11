@@ -8,7 +8,6 @@
  * License version 2.1, as published by the Free Software
  * Foundation.  See file COPYING.
  */
-
 #ifndef CEPH_EXTATTR_H
 #define CEPH_EXTATTR_H
 

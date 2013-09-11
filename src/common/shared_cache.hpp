@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  * 
  */
-
 #ifndef CEPH_SHAREDCACHE_H
 #define CEPH_SHAREDCACHE_H
 
@@ -19,6 +18,7 @@
 #include <list>
 #include <memory>
 #include <utility>
+
 #include "common/Mutex.h"
 #include "common/Cond.h"
 

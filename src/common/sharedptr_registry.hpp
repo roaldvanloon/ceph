@@ -11,12 +11,12 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_SHAREDPTR_REGISTRY_H
 #define CEPH_SHAREDPTR_REGISTRY_H
 
 #include <map>
 #include <memory>
+
 #include "common/Mutex.h"
 #include "common/Cond.h"
 

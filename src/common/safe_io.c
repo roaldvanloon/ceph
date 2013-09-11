@@ -11,13 +11,12 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #define _XOPEN_SOURCE 500
+
+#include "common/safe_io.h"
 
 #include <unistd.h>
 #include <errno.h>
-
-#include "common/safe_io.h"
 
 ssize_t safe_read(int fd, void *buf, size_t count)
 {

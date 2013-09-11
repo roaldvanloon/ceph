@@ -11,20 +11,17 @@
  * Foundation.  See file COPYING.
  * 
  */
+#include "include/types.h"
+#include "common/WorkQueue.h"
 
 #include <sstream>
 
-#include "include/types.h"
 #include "include/utime.h"
-#include "WorkQueue.h"
-
 #include "common/config.h"
-#include "common/HeartbeatMap.h"
 
 #define dout_subsys ceph_subsys_tp
 #undef dout_prefix
 #define dout_prefix *_dout << name << " "
-
 
 ThreadPool::ThreadPool(CephContext *cct_, string nm, int n, const char *option)
   : cct(cct_), name(nm),

@@ -11,9 +11,9 @@
  * Foundation.  See file COPYING.
  *
  */
+#include "common/DecayCounter.h"
 
-#include "DecayCounter.h"
-#include "Formatter.h"
+#include "common/Formatter.h"
 
 void DecayCounter::encode(bufferlist& bl) const
 {

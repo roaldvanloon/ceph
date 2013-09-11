@@ -10,7 +10,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_OBJ_BENCHER_H
 #define CEPH_OBJ_BENCHER_H
 

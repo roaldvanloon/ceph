@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  * 
  */
-
 #include "common/RefCountedObj.h"
 
 void intrusive_ptr_add_ref(RefCountedObject *p) {

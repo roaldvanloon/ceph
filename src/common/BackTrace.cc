@@ -1,13 +1,11 @@
+#include "acconfig.h"
+#include "common/BackTrace.h"
 
 #include <ostream>
 #include <cxxabi.h>
-#include <stdlib.h>
 #include <string.h>
 
-#include "BackTrace.h"
-
 #include "common/version.h"
-#include "acconfig.h"
 
 #define _STR(x) #x
 #define STRINGIFY(x) _STR(x)

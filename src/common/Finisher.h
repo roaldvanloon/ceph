@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  * 
  */
-
 #ifndef CEPH_FINISHER_H
 #define CEPH_FINISHER_H
 

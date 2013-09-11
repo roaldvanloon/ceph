@@ -11,20 +11,16 @@
  * Foundation.  See file COPYING.
  *
  */
-
-#include "include/int_types.h"
-
 #include "common/perf_counters.h"
-#include "common/dout.h"
-#include "common/errno.h"
-#include "common/Formatter.h"
 
 #include <errno.h>
 #include <map>
 #include <sstream>
-#include <stdint.h>
 #include <string.h>
-#include <string>
+
+#include "common/dout.h"
+#include "common/errno.h"
+#include "common/Formatter.h"
 
 using std::ostringstream;
 

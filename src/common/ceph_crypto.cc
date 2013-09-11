@@ -11,15 +11,14 @@
  * Foundation.  See file COPYING.
  *
  */
-
-#include "common/config.h"
-#include "common/ceph_context.h"
-#include "ceph_crypto.h"
-#include "auth/Crypto.h"
+#include "common/ceph_crypto.h"
 
 #include <pthread.h>
 #include <stdlib.h>
 
+#include "common/config.h"
+#include "common/ceph_context.h"
+#include "auth/Crypto.h"
 
 #ifdef USE_CRYPTOPP
 void ceph::crypto::init(CephContext *cct)

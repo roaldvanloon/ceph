@@ -11,13 +11,7 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #include "include/int_types.h"
-
-#include "common/admin_socket.h"
-#include "common/ceph_context.h"
-#include "common/errno.h"
-#include "common/safe_io.h"
 #include "common/admin_socket_client.h"
 
 #include <arpa/inet.h>
@@ -30,13 +24,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
 #include <time.h>
 #include <unistd.h>
 #include <vector>
+
+#include "common/admin_socket.h"
+#include "common/ceph_context.h"
+#include "common/errno.h"
+#include "common/safe_io.h"
 
 using std::ostringstream;
 

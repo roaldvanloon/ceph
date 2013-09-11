@@ -11,13 +11,13 @@
  * Foundation.  See file COPYING.
  * 
  */
-
 #ifndef CEPH_SIMPLECACHE_H
 #define CEPH_SIMPLECACHE_H
 
 #include <map>
 #include <list>
 #include <memory>
+
 #include "common/Mutex.h"
 #include "common/Cond.h"
 

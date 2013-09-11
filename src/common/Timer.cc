@@ -11,24 +11,20 @@
  * Foundation.  See file COPYING.
  *
  */
-
-#include "Cond.h"
-#include "Mutex.h"
-#include "Thread.h"
-#include "Timer.h"
-
-#include "common/config.h"
-#include "include/Context.h"
-
-#define dout_subsys ceph_subsys_timer
-#undef dout_prefix
-#define dout_prefix *_dout << "timer(" << this << ")."
+#include "common/Timer.h"
 
 #include <sstream>
 #include <signal.h>
 #include <sys/time.h>
 #include <math.h>
 
+#include "include/Context.h"
+#include "common/Thread.h"
+#include "common/config.h"
+
+#define dout_subsys ceph_subsys_timer
+#undef dout_prefix
+#define dout_prefix *_dout << "timer(" << this << ")."
 
 class SafeTimerThread : public Thread {
   SafeTimer *parent;

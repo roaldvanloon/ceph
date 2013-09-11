@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #ifndef CEPH_COMMON_PIPE_H
 #define CEPH_COMMON_PIPE_H
 

@@ -11,7 +11,6 @@
  * Foundation.  See file COPYING.
  *
  */
-
 #include "common/code_environment.h"
 
 #include <errno.h>

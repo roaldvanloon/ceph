@@ -11,21 +11,19 @@
  * Foundation.  See file COPYING.
  *
  */
+#include "common/common_init.h"
 
+#include "include/color.h"
 #include "common/ceph_argparse.h"
 #include "common/ceph_context.h"
 #include "common/ceph_crypto.h"
-#include "common/code_environment.h"
-#include "common/common_init.h"
 #include "common/config.h"
 #include "common/dout.h"
 #include "common/errno.h"
 #include "common/safe_io.h"
 #include "common/version.h"
-#include "include/color.h"
 
 #include <errno.h>
-#include <deque>
 
 #define dout_subsys ceph_subsys_
 
