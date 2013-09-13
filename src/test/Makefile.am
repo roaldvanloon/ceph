@@ -1,3 +1,8 @@
+
+include test/encoding/Makefile.am
+include test/bench/Makefile.am
+include test/system/Makefile.am
+
 ## Unknown/other tests
 
 ceph_test_timers_SOURCES = test/TestTimers.cc
@@ -44,26 +49,12 @@ ceph_test_keys_SOURCES = test/testkeys.cc
 ceph_test_keys_LDADD = $(LIBMON) $(CEPH_GLOBAL) 
 bin_DEBUGPROGRAMS += ceph_test_keys
 
+ceph_multi_stress_watch_SOURCES = \
+	test/multi_stress_watch.cc \
+	test/librados/test.cc
+ceph_multi_stress_watch_LDADD = $(LIBRADOS) $(CEPH_GLOBAL)
+bin_DEBUGPROGRAMS += ceph_multi_stress_watch
 
-## Dencoder test
-
-ceph_dencoder_SOURCES = \
-	test/encoding/ceph_dencoder.cc \
-	$(DENCODER_SOURCES)
-ceph_dencoder_LDADD = \
-	$(LIBOSD) $(LIBMDS) $(LIBMON) \
-	$(DENCODER_DEPS) $(CEPH_GLOBAL)
-
-# These should always use explicit _CFLAGS/_CXXFLAGS so avoid basename conflicts
-ceph_dencoder_CFLAGS = ${AM_CFLAGS}
-ceph_dencoder_CXXFLAGS = ${AM_CXXFLAGS}
-
-if COMPILER_HAS_VTA
-ceph_dencoder_CFLAGS += -fno-var-tracking-assignments
-ceph_dencoder_CXXFLAGS += -fno-var-tracking-assignments
-endif
-
-bin_PROGRAMS += ceph-dencoder
 
 
 ## Build tests
@@ -132,126 +123,11 @@ endif # WITH_HADOOPCLIENT
 endif # WITH_BUILD_TESTS
 
 
-## Benchmarks
-
-ceph_smalliobench_SOURCES = \
-	test/bench/small_io_bench.cc \
-	test/bench/rados_backend.cc \
-	test/bench/detailed_stat_collector.cc \
-	test/bench/bencher.cc
-ceph_smalliobench_LDADD = $(LIBRADOS) -lboost_program_options $(CEPH_GLOBAL)
-bin_DEBUGPROGRAMS += ceph_smalliobench
-
-ceph_smalliobenchfs_SOURCES = \
-	test/bench/small_io_bench_fs.cc \
-	test/bench/testfilestore_backend.cc \
-	test/bench/detailed_stat_collector.cc \
-	test/bench/bencher.cc
-ceph_smalliobenchfs_LDADD = $(LIBRADOS) -lboost_program_options $(LIBOS) $(CEPH_GLOBAL)
-bin_DEBUGPROGRAMS += ceph_smalliobenchfs
-
-ceph_smalliobenchdumb_SOURCES = \
-	test/bench/small_io_bench_dumb.cc \
-	test/bench/dumb_backend.cc \
-	test/bench/detailed_stat_collector.cc \
-	test/bench/bencher.cc
-ceph_smalliobenchdumb_LDADD = $(LIBRADOS) -lboost_program_options $(LIBOS) $(CEPH_GLOBAL)
-bin_DEBUGPROGRAMS += ceph_smalliobenchdumb
-
-ceph_smalliobenchrbd_SOURCES = \
-	test/bench/small_io_bench_rbd.cc \
-	test/bench/rbd_backend.cc \
-	test/bench/detailed_stat_collector.cc \
-	test/bench/bencher.cc
-ceph_smalliobenchrbd_LDADD = $(LIBRBD) $(LIBRADOS) -lboost_program_options $(CEPH_GLOBAL)
-bin_DEBUGPROGRAMS += ceph_smalliobenchrbd
-
-ceph_tpbench_SOURCES = \
-	test/bench/tp_bench.cc \
-	test/bench/detailed_stat_collector.cc
-ceph_tpbench_LDADD = $(LIBRADOS) -lboost_program_options $(LIBOS) $(CEPH_GLOBAL)
-bin_DEBUGPROGRAMS += ceph_tpbench
-
-ceph_omapbench_SOURCES = test/omap_bench.cc
-ceph_omapbench_LDADD = $(LIBRADOS) $(CEPH_GLOBAL)
-bin_DEBUGPROGRAMS += ceph_omapbench
-
-ceph_kvstorebench_SOURCES = \
-	test/kv_store_bench.cc \
-	key_value_store/kv_flat_btree_async.cc
-ceph_kvstorebench_LDADD = $(LIBRADOS) $(CEPH_GLOBAL)
-bin_DEBUGPROGRAMS += ceph_kvstorebench
-
-ceph_multi_stress_watch_SOURCES = \
-	test/multi_stress_watch.cc \
-	test/librados/test.cc
-ceph_multi_stress_watch_LDADD = $(LIBRADOS) $(CEPH_GLOBAL)
-bin_DEBUGPROGRAMS += ceph_multi_stress_watch 
-
-
-
-
-
-
-## System tests
-
-libsystest_la_SOURCES = \
-	test/system/cross_process_sem.cc \
-	test/system/systest_runnable.cc \
-	test/system/systest_settings.cc
-libsystest_la_LIBADD = $(CEPH_GLOBAL)
-noinst_LTLIBRARIES += libsystest.la
-
-ceph_test_rados_list_parallel_SOURCES = \
-	test/system/rados_list_parallel.cc \
-	test/system/st_rados_create_pool.cc \
-	test/system/st_rados_list_objects.cc
-ceph_test_rados_list_parallel_LDADD = $(LIBRADOS) libsystest.la $(PTHREAD_LIBS)
-bin_DEBUGPROGRAMS += ceph_test_rados_list_parallel
-
-ceph_test_rados_open_pools_parallel_SOURCES = \
-	test/system/rados_open_pools_parallel.cc \
-	test/system/st_rados_create_pool.cc
-ceph_test_rados_open_pools_parallel_LDADD = $(LIBRADOS) libsystest.la $(PTHREAD_LIBS)
-bin_DEBUGPROGRAMS += ceph_test_rados_open_pools_parallel
-
-ceph_test_rados_delete_pools_parallel_SOURCES = \
-	test/system/rados_delete_pools_parallel.cc \
-	test/system/st_rados_create_pool.cc \
-	test/system/st_rados_delete_pool.cc \
-	test/system/st_rados_list_objects.cc
-ceph_test_rados_delete_pools_parallel_LDADD = $(LIBRADOS) libsystest.la $(PTHREAD_LIBS)
-bin_DEBUGPROGRAMS += ceph_test_rados_delete_pools_parallel
-
-ceph_test_rados_watch_notify_SOURCES = \
-	test/system/rados_watch_notify.cc \
-	test/system/st_rados_create_pool.cc \
-	test/system/st_rados_delete_pool.cc \
-	test/system/st_rados_delete_objs.cc \
-	test/system/st_rados_watch.cc \
-	test/system/st_rados_notify.cc
-ceph_test_rados_watch_notify_LDADD = $(LIBRADOS) libsystest.la $(PTHREAD_LIBS)
-bin_DEBUGPROGRAMS += ceph_test_rados_watch_notify
-
-ceph_bench_log_SOURCES = test/bench_log.cc
-ceph_bench_log_LDADD = $(CEPH_GLOBAL)
-bin_DEBUGPROGRAMS += ceph_bench_log
-
-
 
 ## Unit tests
 
 # target to build but not run the unit tests
 unittests:: $(check_PROGRAMS)
-
-UNITTEST_CXXFLAGS = \
-	$(AM_CXXFLAGS) \
-	-I$(top_srcdir)/src/gtest/include \
-	-I$(top_builddir)/src/gtest/include
-UNITTEST_LDADD = \
-	$(top_builddir)/src/gtest/lib/libgtest.a \
-	$(top_builddir)/src/gtest/lib/libgtest_main.a \
-	$(PTHREAD_LIBS)
 
 unittest_encoding_SOURCES = test/encoding.cc
 unittest_encoding_LDADD = $(LIBCEPHFS) $(LIBRADOS) -lm $(UNITTEST_LDADD)
@@ -378,6 +254,10 @@ unittest_bufferlist_SOURCES = test/bufferlist.cc
 unittest_bufferlist_LDADD = $(UNITTEST_LDADD) $(CEPH_GLOBAL) 
 unittest_bufferlist_CXXFLAGS = $(UNITTEST_CXXFLAGS)
 check_PROGRAMS += unittest_bufferlist
+
+# wrapper for unittest_bufferlist
+check_SCRIPTS += test/unittest_bufferlist.sh
+EXTRA_DIST += test/unittest_bufferlist.sh
 
 unittest_crypto_SOURCES = test/crypto.cc
 unittest_crypto_LDADD = $(UNITTEST_LDADD) $(CEPH_GLOBAL)
@@ -741,11 +621,6 @@ ceph_test_filestore_idempotent_sequence_SOURCES = \
 ceph_test_filestore_idempotent_sequence_LDADD = $(LIBOS) $(CEPH_GLOBAL)
 bin_DEBUGPROGRAMS += ceph_test_filestore_idempotent_sequence
 
-ceph_xattr_bench_SOURCES = test/xattr_bench.cc
-ceph_xattr_bench_LDADD = $(LIBOS) $(UNITTEST_LDADD) $(CEPH_GLOBAL)
-ceph_xattr_bench_CXXFLAGS = $(UNITTEST_CXXFLAGS)
-bin_DEBUGPROGRAMS += ceph_xattr_bench
-
 ceph_test_filejournal_SOURCES = test/test_filejournal.cc
 ceph_test_filejournal_LDADD = $(LIBOS) $(UNITTEST_LDADD) $(CEPH_GLOBAL)
 ceph_test_filejournal_CXXFLAGS = $(UNITTEST_CXXFLAGS)
@@ -801,38 +676,17 @@ noinst_HEADERS += \
 	test/osd/RadosModel.h \
 	test/osd/Object.h \
 	test/osd/TestOpStat.h \
-	test/bench/distribution.h \
-	test/bench/rados_backend.h \
-	test/bench/rbd_backend.h \
-	test/bench/bencher.h \
-	test/bench/backend.h \
-	test/bench/dumb_backend.h \
-	test/bench/stat_collector.h \
-	test/bench/detailed_stat_collector.h \
-	test/bench/testfilestore_backend.h \
 	test/common/ObjectContents.h \
-	test/encoding/types.h \
 	test/filestore/DeterministicOpSequence.h \
 	test/filestore/FileStoreTracker.h \
 	test/filestore/FileStoreDiff.h \
 	test/filestore/TestFileStoreState.h \
 	test/filestore/workload_generator.h \
-	test/kv_store_bench.h \
 	test/librados/test.h \
 	test/ObjectMap/KeyValueDBMemory.h \
-	test/omap_bench.h \
 	test/osd/Object.h \
 	test/osd/RadosModel.h \
 	test/osd/TestOpStat.h \
 	test/osdc/FakeWriteback.h \
-	test/system/cross_process_sem.h \
-	test/system/st_rados_create_pool.h \
-	test/system/st_rados_list_objects.h \
-	test/system/st_rados_delete_objs.h \
-	test/system/st_rados_delete_pool.h \
-	test/system/st_rados_notify.h \
-	test/system/st_rados_watch.h \
-	test/system/systest_runnable.h \
-	test/system/systest_settings.h \
 	test/unit.h
 

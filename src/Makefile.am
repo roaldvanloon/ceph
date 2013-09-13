@@ -169,8 +169,6 @@ EXTRA_DIST += \
 	$(srcdir)/check_version \
 	$(srcdir)/.git_version \
 	$(srcdir)/ceph-rbdnamer \
-	$(srcdir)/test/encoding/readable.sh \
-	$(srcdir)/test/encoding/check-generated.sh \
 	$(srcdir)/upstart/ceph-all.conf \
 	$(srcdir)/upstart/ceph-mon.conf \
 	$(srcdir)/upstart/ceph-mon-all.conf \
@@ -194,7 +192,6 @@ EXTRA_DIST += \
 	ceph-rest-api \
 	mount.fuse.ceph \
 	rbdmap \
-	unittest_bufferlist.sh \
 	yasm-wrapper
 
 EXTRA_DIST += \
@@ -214,8 +211,7 @@ EXTRA_DIST += \
 	libs3/libs3.spec \
 	libs3/mswin \
 	libs3/src \
-	libs3/test \
-	unittest_bufferlist.sh
+	libs3/test
 
 # work around old versions of automake that don't define $docdir
 # NOTE: this won't work on suse, where docdir is /usr/share/doc/packages/$package.
@@ -254,20 +250,6 @@ BUILT_SOURCES += init-ceph
 sbin_SCRIPTS += mkcephfs
 
 shell_scripts += init-ceph mkcephfs
-
-
-
-
-
-# tests to actually run on "make check"; if you need extra, non-test,
-# executables built, you need to replace this with manual assignments
-# target by target
-
-TESTS = $(check_PROGRAMS) unittest_bufferlist.sh
-
-check-local:
-	$(srcdir)/test/encoding/check-generated.sh
-	$(srcdir)/test/encoding/readable.sh ../ceph-object-corpus
 
 
 # base targets

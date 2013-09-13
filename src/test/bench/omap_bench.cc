@@ -19,7 +19,7 @@
 #include "include/utime.h"
 #include "global/global_context.h"
 #include "common/ceph_argparse.h"
-#include "test/omap_bench.h"
+#include "test/bench/omap_bench.h"
 
 #include <string>
 #include <iostream>

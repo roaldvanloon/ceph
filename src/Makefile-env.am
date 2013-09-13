@@ -23,8 +23,14 @@ bin_DEBUGPROGRAMS =
 # like sbin_SCRIPTS but can be used to install to e.g. /usr/sbin
 ceph_sbindir = $(exec_prefix)$(sbindir)
 
-# C/C++ tests to build will be appended to this
+# tests to actually run on "make check"; if you need extra, non-test,
+# executables built, you need to replace this with manual assignments
+# target by target
 check_PROGRAMS =
+check_SCRIPTS =
+TESTS = \
+	$(check_PROGRAMS) \
+	$(check_SCRIPTS)
 
 # when doing a debug build, make sure to make the targets
 if WITH_DEBUG
@@ -89,6 +95,16 @@ endif
 
 CCAS = ${srcdir}/yasm-wrapper
 AM_CCASFLAGS = -f elf64
+
+UNITTEST_CXXFLAGS = \
+	$(AM_CXXFLAGS) \
+	-I$(top_srcdir)/src/gtest/include \
+	-I$(top_builddir)/src/gtest/include
+
+UNITTEST_LDADD = \
+	$(top_builddir)/src/gtest/lib/libgtest.a \
+	$(top_builddir)/src/gtest/lib/libgtest_main.a \
+	$(PTHREAD_LIBS)
 
 
 #####################
